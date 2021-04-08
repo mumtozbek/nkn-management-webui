@@ -17,7 +17,7 @@ class CreateUptimesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('node_id');
             $table->float('speed');
-            $table->text('response');
+            $table->text('response')->nullable();
             $table->timestamps();
 
             $table->foreign('node_id')->references('id')->on('nodes')->onUpdate('cascade')->onDelete('cascade');
