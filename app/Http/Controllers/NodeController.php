@@ -41,7 +41,7 @@ class NodeController extends Controller
 
         $node->fill($data)->save();
 
-        return redirect($node->path())
+        return redirect(route('nodes.index'))
             ->with('flash', 'Node has been created!');
     }
 
@@ -80,7 +80,7 @@ class NodeController extends Controller
 
         $node->update($data);
 
-        return redirect($node->path())
+        return redirect(route('nodes.index'))
             ->with('flash', 'Node has been updated!');
     }
 
