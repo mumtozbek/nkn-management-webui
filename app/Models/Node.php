@@ -44,4 +44,14 @@ class Node extends Model
     {
         return route('nodes.show', $this->id);
     }
+
+    /**
+     * Uptimes relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function uptimes()
+    {
+        return $this->hasMany(Uptime::class);
+    }
 }
