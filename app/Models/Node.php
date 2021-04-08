@@ -16,7 +16,7 @@ class Node extends Model
         'host',
         'status',
         'version',
-        'latest_block',
+        'height',
         'proposals',
         'relays',
         'speed',

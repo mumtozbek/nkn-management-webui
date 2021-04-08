@@ -79,7 +79,7 @@ class NodesDataTable extends DataTable
             Column::make('host'),
             Column::make('status'),
             Column::make('version'),
-            Column::make('latest_block'),
+            Column::make('height'),
             Column::make('proposals'),
             Column::make('relays'),
             Column::make('speed'),

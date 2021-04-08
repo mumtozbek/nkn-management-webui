@@ -18,7 +18,7 @@ class CreateNodesTable extends Migration
             $table->string('host', 30);
             $table->string('status', 30)->nullable();
             $table->string('version', 10)->nullable();
-            $table->unsignedInteger('latest_block')->nullable();
+            $table->unsignedInteger('height')->nullable();
             $table->unsignedInteger('proposals')->nullable();
             $table->unsignedInteger('relays')->nullable();
             $table->unsignedFloat('speed')->nullable();
