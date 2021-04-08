@@ -17,4 +17,6 @@ Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::resource('providers', App\Http\Controllers\ProviderController::class)->middleware('auth');
+
 Route::resource('nodes', App\Http\Controllers\NodeController::class)->middleware('auth');

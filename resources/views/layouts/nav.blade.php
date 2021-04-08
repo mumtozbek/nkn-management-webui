@@ -10,6 +10,9 @@
         <!-- Left Side Of Navbar -->
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('providers.index') }}">{{ __('Browse Providers') }}</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('nodes.index') }}">{{ __('Browse Nodes') }}</a>
             </li>
         </ul>
