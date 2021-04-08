@@ -22,8 +22,8 @@ class NodesDataTable extends DataTable
             ->addColumn('action', function ($item) {
                 return implode('', [
                     '<div class="dt-buttons btn-group flex-wrap">',
-                    '<a href="' . route('nodes.edit', $item->id) . '" class="btn btn-primary">' . __('Edit') . '</a>',
-                    '<a href="' . route('nodes.show', $item->id) . '" class="btn btn-info">' . __('Show') . '</a>',
+                    '<a href="' . route('nodes.show', $item->id) . '" class="btn btn-primary">' . __('Show') . '</a>',
+                    '<a href="' . route('nodes.edit', $item->id) . '" class="btn btn-success">' . __('Edit') . '</a>',
                     '</div>',
                 ]);
             });
