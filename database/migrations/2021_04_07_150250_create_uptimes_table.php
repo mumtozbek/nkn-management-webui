@@ -19,6 +19,8 @@ class CreateUptimesTable extends Migration
             $table->float('speed');
             $table->text('response');
             $table->timestamps();
+
+            $table->foreign('node_id')->references('id')->on('nodes')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
