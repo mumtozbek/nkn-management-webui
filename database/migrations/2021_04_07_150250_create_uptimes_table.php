@@ -16,7 +16,8 @@ class CreateUptimesTable extends Migration
         Schema::create('uptimes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('node_id');
-            $table->unsignedBigInteger('speed');
+            $table->float('speed');
+            $table->text('response');
             $table->timestamps();
         });
     }

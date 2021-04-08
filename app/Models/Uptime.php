@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Uptime extends Model
 {
     use HasFactory;
+
+    /**
+     * Mass assignment fields.
+     */
+    protected $fillable = [
+        'speed',
+        'response',
+    ];
 }
