@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('uptime:refresh')->everyMinute();
+        $schedule->command('uptime:refresh')->everyTenMinutes();
     }
 
     /**
