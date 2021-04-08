@@ -54,7 +54,7 @@ class NodesDataTable extends DataTable
             ->dom('Bfrtip')
             ->orderBy(1)
             ->parameters([
-                'relayed' => [
+                'relays' => [
                     0, 'desc'
                 ]
             ])
@@ -81,7 +81,7 @@ class NodesDataTable extends DataTable
             Column::make('version'),
             Column::make('latest_block'),
             Column::make('proposals'),
-            Column::make('relayed'),
+            Column::make('relays'),
             Column::make('speed'),
             Column::make('uptime'),
             Column::computed('action')

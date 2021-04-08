@@ -18,7 +18,7 @@ class Node extends Model
         'version',
         'latest_block',
         'proposals',
-        'relayed',
+        'relays',
         'speed',
         'uptime',
     ];

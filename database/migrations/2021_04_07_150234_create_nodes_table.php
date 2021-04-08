@@ -20,7 +20,7 @@ class CreateNodesTable extends Migration
             $table->string('version', 10)->nullable();
             $table->unsignedInteger('latest_block')->nullable();
             $table->unsignedInteger('proposals')->nullable();
-            $table->unsignedInteger('relayed')->nullable();
+            $table->unsignedInteger('relays')->nullable();
             $table->unsignedFloat('speed')->nullable();
             $table->unsignedInteger('uptime')->nullable();
             $table->timestamps();
