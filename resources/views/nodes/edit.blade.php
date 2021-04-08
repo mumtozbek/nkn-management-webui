@@ -17,7 +17,17 @@
 
                             <div class="form-group">
                                 <label for="host">{{ __('Host') }}</label>
-                                <input type="text" name="host" id="title" value="{{ old('host', $node->host) }}" class="form-control" required>
+                                <input type="text" name="host" id="host" value="{{ old('host', $node->host) }}" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="account_id">{{ __('Account') }}</label>
+                                <select name="account_id" id="account_id" class="form-control" required>
+                                    <option value="">{{ __('Select the Account') }}</option>
+                                    @foreach($accounts as $account)
+                                        <option value="{{ $account->id }}"{{ $account->is($node->account) ? ' selected' : '' }}>{{ $account->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="form-group">

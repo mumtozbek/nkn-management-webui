@@ -13,6 +13,9 @@
                 <a class="nav-link" href="{{ route('providers.index') }}">{{ __('Browse Providers') }}</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('accounts.index') }}">{{ __('Browse Accounts') }}</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('nodes.index') }}">{{ __('Browse Nodes') }}</a>
             </li>
         </ul>

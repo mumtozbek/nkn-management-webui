@@ -2,12 +2,12 @@
 
 namespace App\DataTables;
 
-use App\Models\Node;
+use App\Models\Account;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class NodesDataTable extends DataTable
+class AccountsDataTable extends DataTable
 {
     /**
      * Build DataTable class.
@@ -19,19 +19,13 @@ class NodesDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('account', function ($item) {
-                if (!is_null($item->account) && !is_null($item->account->provider)) {
-                    return $item->account->name . '(' . $item->account->provider->name . ')';
-                } elseif (!is_null($item->account)) {
-                    return $item->account->name;
-                } else {
-                    return '';
-                }
+            ->addColumn('provider', function ($item) {
+                return $item->provider->name ?? '';
             })->addColumn('action', function ($item) {
                 return implode('', [
                     '<div class="dt-buttons btn-group flex-wrap">',
-                    '<a href="' . route('nodes.show', $item->id) . '" class="btn btn-primary">' . __('Show') . '</a>',
-                    '<a href="' . route('nodes.edit', $item->id) . '" class="btn btn-success">' . __('Edit') . '</a>',
+                    '<a href="' . route('accounts.show', $item->id) . '" class="btn btn-primary">' . __('Show') . '</a>',
+                    '<a href="' . route('accounts.edit', $item->id) . '" class="btn btn-success">' . __('Edit') . '</a>',
                     '</div>',
                 ]);
             });
@@ -40,10 +34,10 @@ class NodesDataTable extends DataTable
     /**
      * Get query source of dataTable.
      *
-     * @param \App\Models\Node $model
+     * @param \App\Models\Account $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(Node $model)
+    public function query(Account $model)
     {
         return $model->newQuery();
     }
@@ -56,7 +50,7 @@ class NodesDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-            ->setTableId('nodes-table')
+            ->setTableId('accounts-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Bfrtip')
@@ -84,15 +78,8 @@ class NodesDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('account'),
-            Column::make('host'),
-            Column::make('status'),
-            Column::make('version'),
-            Column::make('height'),
-            Column::make('proposals'),
-            Column::make('relays'),
-            Column::make('speed'),
-            Column::make('uptime'),
+            Column::make('provider'),
+            Column::make('name'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -109,6 +96,6 @@ class NodesDataTable extends DataTable
      */
     protected function filename()
     {
-        return 'Nodes_' . date('YmdHis');
+        return 'Accounts_' . date('YmdHis');
     }
 }

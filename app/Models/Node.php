@@ -14,6 +14,7 @@ class Node extends Model
      */
     protected $fillable = [
         'host',
+        'account_id',
         'status',
         'version',
         'height',
@@ -32,6 +33,7 @@ class Node extends Model
     {
         return [
             'host' => 'required|unique:nodes,host,' . $this->id,
+            'account_id' => 'required|exists:accounts,id',
         ];
     }
 
@@ -53,5 +55,15 @@ class Node extends Model
     public function uptimes()
     {
         return $this->hasMany(Uptime::class);
+    }
+
+    /**
+     * Account relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\belongsTo
+     */
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
     }
 }

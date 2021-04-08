@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\NodesDataTable;
+use App\Models\Account;
 use App\Models\Node;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,9 @@ class NodeController extends Controller
      */
     public function create()
     {
-        return view('nodes.create');
+        $accounts = Account::all();
+
+        return view('nodes.create', compact('accounts'));
     }
 
     /**
@@ -64,7 +67,9 @@ class NodeController extends Controller
      */
     public function edit(Node $node)
     {
-        return view('nodes.edit', compact('node'));
+        $accounts = Account::all();
+
+        return view('nodes.edit', compact('node', 'accounts'));
     }
 
     /**
