@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <a class="navbar-brand" href="{{ url('/') }}">
         {{ config('app.name') }}
     </a>
