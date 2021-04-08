@@ -17,8 +17,5 @@ class DatabaseSeeder extends Seeder
     {
         // Create demo user account
         User::factory()->create(['email' => 'test@example.com']);
-
-        // Create 100 fake nodes
-        Node::factory(100)->create();
     }
 }
