@@ -42,50 +42,68 @@ class RefreshUptime extends Command
         \Log::info("Starting uptime checking...");
 
         Node::all()->each(function ($node) {
-            $connection = @fsockopen($node->host, 30003);
+            $response = $this->getNodeState($node->host);
 
-            if (is_resource($connection)) {
-                $response = Http::withBody('{"jsonrpc":"2.0","method":"getnodestate","params":{},"id":1}', 'application/json')->post("http://{$node->host}:30003/");
+            // Connection success
+            if (is_string($response)) {
+                $json = json_decode($response);
 
-                if ($response->ok()) {
-                    $json = $response->json();
+                if (!empty($json) && !empty($json->result)) {
+                    $result = $json->result;
+                    $speed = ($result->relayMessageCount / $result->uptime) * 3600;
 
-                    if (!empty($json['result'])) {
-                        $result = $json['result'];
-                        $speed = ($result['relayMessageCount'] / $result['uptime']) * 3600;
+                    $node->update([
+                        'status' => $result->syncState,
+                        'version' => $result->version,
+                        'height' => $result->height,
+                        'proposals' => $result->proposalSubmitted,
+                        'relays' => $result->relayMessageCount,
+                        'uptime' => $result->uptime,
+                        'speed' => $speed,
+                    ]);
 
-                        $node->update([
-                            'status' => $result['syncState'],
-                            'version' => $result['version'],
-                            'height' => $result['height'],
-                            'proposals' => $result['proposalSubmitted'],
-                            'relays' => $result['relayMessageCount'],
-                            'uptime' => $result['uptime'],
-                            'speed' => $speed,
-                        ]);
+                    $node->uptimes()->create([
+                        'speed' => $speed,
+                        'response' => json_encode($json),
+                    ]);
 
-                        $node->uptimes()->create([
-                            'speed' => $speed,
-                            'response' => json_encode($json),
-                        ]);
-
-                        return true;
-                    }
+                    return true;
                 }
-            } else {
-                $node->update([
-                    'status' => 'OFFLINE',
-                    'speed' => 0,
-                ]);
-
-                $node->uptimes()->create([
-                    'speed' => 0,
-                ]);
             }
+
+            // Connection failed, so log it
+            $node->update([
+                'status' => 'OFFLINE',
+                'speed' => 0,
+            ]);
+
+            $node->uptimes()->create([
+                'speed' => 0,
+            ]);
 
             \Log::info("Node {$node->host} is down!");
         });
 
         \Log::info("Ended uptime checking.");
+    }
+
+    private function getNodeState($host)
+    {
+        $data_string = '{"jsonrpc":"2.0","method":"getnodestate","params":{},"id":1}';
+
+        $ch = curl_init('http://' . $host . ':30003/');
+
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($data_string)
+            ]
+        );
+
+        return curl_exec($ch);
     }
 }
