@@ -48,33 +48,46 @@ class RefreshUptime extends Command
             if (is_string($response)) {
                 $json = json_decode($response);
 
-                if (!empty($json) && !empty($json->result)) {
-                    $result = $json->result;
-                    $speed = ($result->relayMessageCount / $result->uptime) * 3600;
+                if (!empty($json)) {
+                    if (!empty($json->result)) {
+                        $result = $json->result;
+                        $speed = ($result->relayMessageCount / $result->uptime) * 3600;
 
-                    $node->update([
-                        'status' => $result->syncState,
-                        'version' => $result->version,
-                        'height' => $result->height,
-                        'proposals' => $result->proposalSubmitted,
-                        'relays' => $result->relayMessageCount,
-                        'uptime' => $result->uptime,
-                        'speed' => $speed,
-                    ]);
+                        $node->update([
+                            'status' => $result->syncState,
+                            'version' => $result->version,
+                            'height' => $result->height,
+                            'proposals' => $result->proposalSubmitted,
+                            'relays' => $result->relayMessageCount,
+                            'uptime' => $result->uptime,
+                            'speed' => $speed,
+                        ]);
 
-                    $node->uptimes()->create([
-                        'speed' => $speed,
-                        'response' => json_encode($json),
-                    ]);
+                        $node->uptimes()->create([
+                            'speed' => $speed,
+                            'response' => json_encode($json),
+                        ]);
 
-                    return true;
+                        return true;
+                    } elseif (!empty($json->error)) {
+                        if ($json->error->code == '-45022') {
+                            $status = 'GENERATE_ID';
+                        } else {
+                            $status = $json->error->code;
+                        }
+
+                        $node->update([
+                            'status' => $status,
+                        ]);
+
+                        return true;
+                    }
                 }
             }
 
             // Connection failed, so log it
             $node->update([
                 'status' => 'OFFLINE',
-                'speed' => 0,
             ]);
 
             $node->uptimes()->create([
