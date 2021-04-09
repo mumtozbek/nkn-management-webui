@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Node;
+use App\Models\Uptime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -21,8 +25,10 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Uptime $uptime)
     {
-        return view('home');
+        $chartData = Uptime::getChartData();
+
+        return view('home', compact('chartData'));
     }
 }

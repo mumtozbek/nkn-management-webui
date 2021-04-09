@@ -14,7 +14,14 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
+                    <div class="chart-container" style="position: relative; height:500px; width:100%">
+                        <canvas id="myChart"></canvas>
+                    </div>
+
+                    <script>
+                        var ctx = document.getElementById('myChart');
+                        var myChart = new Chart(ctx, {!! json_encode($chartData) !!});
+                    </script>
                 </div>
             </div>
         </div>

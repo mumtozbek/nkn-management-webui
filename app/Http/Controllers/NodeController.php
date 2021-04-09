@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\NodesDataTable;
 use App\Models\Account;
 use App\Models\Node;
+use App\Models\Uptime;
 use Illuminate\Http\Request;
 
 class NodeController extends Controller
@@ -56,7 +57,9 @@ class NodeController extends Controller
      */
     public function show(Node $node)
     {
-        return view('nodes.show', compact('node'));
+        $chartData = Uptime::getChartData($node->id);
+
+        return view('nodes.show', compact('node', 'chartData'));
     }
 
     /**
