@@ -78,7 +78,11 @@ class RefreshUptime extends Command
 
                         $node->update([
                             'status' => $status,
-                            'speed' => null,
+                            'speed' => 0,
+                        ]);
+
+                        $node->uptimes()->create([
+                            'speed' => 0,
                         ]);
 
                         return true;
@@ -89,6 +93,10 @@ class RefreshUptime extends Command
             // Connection failed, so log it
             $node->update([
                 'status' => 'OFFLINE',
+            ]);
+
+            $node->uptimes()->create([
+                'speed' => 0,
             ]);
 
             \Log::info("Node {$node->host} is down!");
