@@ -72,6 +72,8 @@ class RefreshUptime extends Command
                     } elseif (!empty($json->error)) {
                         if ($json->error->code == '-45022') {
                             $status = 'GENERATE_ID';
+                        } elseif ($json->error->code == '-45024') {
+                            $status = 'PRUNING_DB';
                         } else {
                             $status = $json->error->code;
                         }
