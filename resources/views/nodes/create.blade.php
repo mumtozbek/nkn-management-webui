@@ -19,7 +19,6 @@
                             </div>
 
                             <div class="form-group">
-                                {{ old('account_id') }}
                                 <label for="account_id">{{ __('Account') }}</label>
                                 <select name="account_id" id="account_id" class="form-control" required>
                                     <option value="">{{ __('Select the Account') }}</option>
