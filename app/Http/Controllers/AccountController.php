@@ -97,6 +97,9 @@ class AccountController extends Controller
      */
     public function destroy(Account $account)
     {
-        //
+        $account->delete();
+
+        return redirect(route('accounts.index'))
+            ->with('flash', 'Account has been deleted!');
     }
 }

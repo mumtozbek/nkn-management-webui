@@ -100,6 +100,9 @@ class NodeController extends Controller
      */
     public function destroy(Node $node)
     {
-        //
+        $node->delete();
+
+        return redirect(route('nodes.index'))
+            ->with('flash', 'Node has been deleted!');
     }
 }

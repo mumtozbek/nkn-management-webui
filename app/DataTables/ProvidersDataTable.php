@@ -21,9 +21,14 @@ class ProvidersDataTable extends DataTable
             ->eloquent($query)
             ->addColumn('action', function ($item) {
                 return implode('', [
+                    '<form id="delete-' . $item->id . '" action="' . route('providers.destroy', $item->id) . '" method="POST">',
+                    '<input type="hidden" name="_method" value="DELETE">',
+                    '<input type="hidden" name="_token" value="' . csrf_token() . '">',
+                    '</form>',
                     '<div class="dt-buttons btn-group flex-wrap">',
                     '<a href="' . route('providers.show', $item->id) . '" class="btn btn-primary">' . __('Show') . '</a>',
                     '<a href="' . route('providers.edit', $item->id) . '" class="btn btn-success">' . __('Edit') . '</a>',
+                    '<a class="btn btn-danger" href="#" onclick="if(confirm(\'' . __('Do You really want to delete this provider?') . '\')) document.getElementById(\'delete-' . $item->id . '\').submit()">' . __('Delete') . '</a>',
                     '</div>',
                 ]);
             });

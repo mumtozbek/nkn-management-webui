@@ -23,9 +23,14 @@ class AccountsDataTable extends DataTable
                 return $item->provider->name ?? '';
             })->addColumn('action', function ($item) {
                 return implode('', [
+                    '<form id="delete-' . $item->id . '" action="' . route('accounts.destroy', $item->id) . '" method="POST">',
+                    '<input type="hidden" name="_method" value="DELETE">',
+                    '<input type="hidden" name="_token" value="' . csrf_token() . '">',
+                    '</form>',
                     '<div class="dt-buttons btn-group flex-wrap">',
                     '<a href="' . route('accounts.show', $item->id) . '" class="btn btn-primary">' . __('Show') . '</a>',
                     '<a href="' . route('accounts.edit', $item->id) . '" class="btn btn-success">' . __('Edit') . '</a>',
+                    '<a class="btn btn-danger" href="#" onclick="if(confirm(\'' . __('Do You really want to delete this account?') . '\')) document.getElementById(\'delete-' . $item->id . '\').submit()">' . __('Delete') . '</a>',
                     '</div>',
                 ]);
             });

@@ -45,9 +45,14 @@ class NodesDataTable extends DataTable
                 return '<span class="badge badge-' . $class . '">' . $item->status . '</span>';
             })->addColumn('action', function ($item) {
                 return implode('', [
+                    '<form id="delete-' . $item->id . '" action="' . route('nodes.destroy', $item->id) . '" method="POST">',
+                    '<input type="hidden" name="_method" value="DELETE">',
+                    '<input type="hidden" name="_token" value="' . csrf_token() . '">',
+                    '</form>',
                     '<div class="dt-buttons btn-group flex-wrap">',
                     '<a href="' . route('nodes.show', $item->id) . '" class="btn btn-primary">' . __('Show') . '</a>',
                     '<a href="' . route('nodes.edit', $item->id) . '" class="btn btn-success">' . __('Edit') . '</a>',
+                    '<a class="btn btn-danger" href="#" onclick="if(confirm(\'' . __('Do You really want to delete this node?') . '\')) document.getElementById(\'delete-' . $item->id . '\').submit()">' . __('Delete') . '</a>',
                     '</div>',
                 ]);
             })
