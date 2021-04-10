@@ -66,4 +66,12 @@ class Node extends Model
     {
         return $this->belongsTo(Account::class);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getProviderAttribute()
+    {
+        return $this->account->provider;
+    }
 }

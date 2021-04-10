@@ -37,4 +37,14 @@ class Provider extends Model
     {
         return route('providers.show', $this->id);
     }
+
+    /**
+     * Accounts relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function accounts()
+    {
+        return $this->hasMany(Account::class);
+    }
 }

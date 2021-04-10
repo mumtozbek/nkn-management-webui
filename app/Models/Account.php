@@ -31,12 +31,22 @@ class Account extends Model
     }
 
     /**
-     * Node relation.
+     * Provider relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\belongsTo
      */
     public function provider()
     {
         return $this->belongsTo(Provider::class);
+    }
+
+    /**
+     * Nodes relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function nodes()
+    {
+        return $this->hasMany(Node::class);
     }
 }
