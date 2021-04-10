@@ -20,13 +20,9 @@ class NodesDataTable extends DataTable
         return datatables()
             ->eloquent($query)
             ->addColumn('account', function ($item) {
-                if (!is_null($item->account) && !is_null($item->account->provider)) {
-                    return $item->account->name . '(' . $item->account->provider->name . ')';
-                } elseif (!is_null($item->account)) {
-                    return $item->account->name;
-                } else {
-                    return '';
-                }
+                return $item->account->name;
+            })->addColumn('provider', function ($item) {
+                return $item->account->provider->name;
             })->addColumn('status', function ($item) {
                 if ($item->status == 'OFFLINE') {
                     $class = 'danger';
@@ -101,7 +97,8 @@ class NodesDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('account'),
+            Column::make('account', 'account.name'),
+            Column::make('provider'),
             Column::make('host'),
             Column::make('status'),
             Column::make('version'),
