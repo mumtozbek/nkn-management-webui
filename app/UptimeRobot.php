@@ -91,6 +91,8 @@ class UptimeRobot
 
         if (!empty($response['stat']) && $response['stat'] == 'ok') {
             return $response['monitor']['id'];
+        } else {
+            return 0;
         }
     }
 }
