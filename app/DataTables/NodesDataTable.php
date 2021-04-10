@@ -27,6 +27,22 @@ class NodesDataTable extends DataTable
                 } else {
                     return '';
                 }
+            })->addColumn('status', function ($item) {
+                if ($item->status == 'OFFLINE') {
+                    $class = 'danger';
+                } elseif ($item->status == 'GENERATE_ID') {
+                    $class = 'info';
+                } elseif ($item->status == 'PRUNING_DB') {
+                    $class = 'secondary';
+                } elseif ($item->status == 'SYNC_STARTED') {
+                    $class = 'primary';
+                } elseif ($item->status == 'PERSIST_FINISHED') {
+                    $class = 'success';
+                } else {
+                    $class = 'light';
+                }
+
+                return '<span class="badge badge-' . $class . '">' . $item->status . '</span>';
             })->addColumn('action', function ($item) {
                 return implode('', [
                     '<div class="dt-buttons btn-group flex-wrap">',
@@ -34,7 +50,8 @@ class NodesDataTable extends DataTable
                     '<a href="' . route('nodes.edit', $item->id) . '" class="btn btn-success">' . __('Edit') . '</a>',
                     '</div>',
                 ]);
-            });
+            })
+            ->rawColumns(['status', 'action']);
     }
 
     /**
