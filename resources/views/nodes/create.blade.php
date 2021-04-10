@@ -19,11 +19,12 @@
                             </div>
 
                             <div class="form-group">
+                                {{ old('account_id') }}
                                 <label for="account_id">{{ __('Account') }}</label>
                                 <select name="account_id" id="account_id" class="form-control" required>
                                     <option value="">{{ __('Select the Account') }}</option>
                                     @foreach($accounts as $account)
-                                        <option value="{{ $account->id }}"{{ $account->id === old('account_id') ? ' selected' : '' }}>{{ $account->name }} ({{ $account->provider->name }})</option>
+                                        <option value="{{ $account->id }}"{{ $account->id == old('account_id') ? ' selected' : '' }}>{{ $account->name }} ({{ $account->provider->name }})</option>
                                     @endforeach
                                 </select>
                             </div>

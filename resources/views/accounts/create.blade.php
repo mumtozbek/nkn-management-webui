@@ -23,7 +23,7 @@
                                 <select name="provider_id" id="provider_id" class="form-control" required>
                                     <option value="">{{ __('Select the Provider') }}</option>
                                     @foreach($providers as $provider)
-                                        <option value="{{ $provider->id }}"{{ $provider->id === old('provider_id') ? ' selected' : '' }}>{{ $provider->name }}</option>
+                                        <option value="{{ $provider->id }}"{{ $provider->id == old('provider_id') ? ' selected' : '' }}>{{ $provider->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
