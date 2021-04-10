@@ -25,6 +25,17 @@ class Node extends Model
     ];
 
     /**
+     * Default injected relations.
+     */
+    protected $with = [
+        'account',
+    ];
+
+    protected $appends = [
+        'provider',
+    ];
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
