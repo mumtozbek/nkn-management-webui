@@ -78,7 +78,9 @@ class RefreshUptime extends Command
                         } elseif ($json->error->code == '-45024') {
                             $status = 'PRUNING_DB';
                         } else {
-                            $status = $json->error->code;
+                            \Log::info("Node {$node->host} returned error:" . json_encode($json->error));
+
+                            return true;
                         }
 
                         $node->update([
