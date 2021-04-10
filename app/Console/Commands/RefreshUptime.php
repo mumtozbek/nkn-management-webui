@@ -117,7 +117,7 @@ class RefreshUptime extends Command
             'jsonrpc' => '2.0',
             'id' => '1',
             'method' => 'getnodestate',
-            'params' => [],
+            'params' => (object)[],
         ];
 
         $ch = curl_init('http://' . $host . ':30003/');
