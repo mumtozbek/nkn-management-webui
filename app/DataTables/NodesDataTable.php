@@ -78,7 +78,7 @@ class NodesDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Bfrtip')
-            ->orderBy([8, 'desc'])
+            ->orderBy([9, 'desc'])
             ->buttons(
                 Button::make('create'),
                 Button::make('export'),
