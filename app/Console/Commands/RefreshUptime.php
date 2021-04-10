@@ -83,9 +83,11 @@ class RefreshUptime extends Command
                             'speed' => 0,
                         ]);
 
-                        $node->uptimes()->create([
-                            'speed' => 0,
-                        ]);
+                        if ($status == $json->error->code) {
+                            $node->uptimes()->create([
+                                'speed' => 0,
+                            ]);
+                        }
 
                         return true;
                     }
@@ -95,6 +97,7 @@ class RefreshUptime extends Command
             // Connection failed, so log it
             $node->update([
                 'status' => 'OFFLINE',
+                'speed' => 0,
             ]);
 
             $node->uptimes()->create([
