@@ -18,7 +18,6 @@ class Node extends Model
         'status',
         'version',
         'height',
-        'blocks',
         'proposals',
         'relays',
         'uptime',
@@ -55,6 +54,16 @@ class Node extends Model
     public function uptimes()
     {
         return $this->hasMany(Uptime::class);
+    }
+
+    /**
+     * Blocks relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function blocks()
+    {
+        return $this->hasMany(Block::class);
     }
 
     /**
