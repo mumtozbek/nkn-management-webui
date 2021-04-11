@@ -61,10 +61,10 @@ class RefreshUptime extends Command
                             'status' => $result->syncState,
                             'version' => $result->version,
                             'height' => $result->height,
+                            'blocks' => (int)$result->height - (int)$node->height,
                             'proposals' => $result->proposalSubmitted,
                             'relays' => $result->relayMessageCount,
                             'uptime' => $result->uptime,
-                            'speed' => $speed,
                         ]);
 
                         $node->uptimes()->create([
@@ -146,17 +146,17 @@ class RefreshUptime extends Command
         $hosts = $nodes->pluck('host')->toArray();
         $monitors = collect($api->getMonitors());
 
-        $monitorsToDelete = $monitors->filter(function($item) use ($hosts) {
+        $monitorsToDelete = $monitors->filter(function ($item) use ($hosts) {
             return !in_array($item['url'], $hosts);
         });
 
-        foreach($monitorsToDelete as $monitor) {
+        foreach ($monitorsToDelete as $monitor) {
             $api->deleteMonitor($monitor['id']);
         }
 
         $monitorsToCreate = $nodes->pluck('host')->diff($monitors->pluck('url'));
 
-        foreach($monitorsToCreate as $host) {
+        foreach ($monitorsToCreate as $host) {
             $api->createMonitor($host, $alert_contacts);
         }
     }

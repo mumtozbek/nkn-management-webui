@@ -108,6 +108,7 @@ class NodesDataTable extends DataTable
             Column::make('status'),
             Column::make('version'),
             Column::make('height'),
+            Column::make('blocks'),
             Column::make('proposals'),
             Column::make('relays'),
             Column::make('speed'),

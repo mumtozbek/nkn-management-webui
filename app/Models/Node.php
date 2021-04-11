@@ -18,9 +18,9 @@ class Node extends Model
         'status',
         'version',
         'height',
+        'blocks',
         'proposals',
         'relays',
-        'speed',
         'uptime',
     ];
 
