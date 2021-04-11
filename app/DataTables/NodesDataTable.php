@@ -26,6 +26,8 @@ class NodesDataTable extends DataTable
                     $class = 'info';
                 } elseif ($item->status == 'PRUNING_DB') {
                     $class = 'secondary';
+                } elseif ($item->status == 'WAIT_FOR_SYNCING') {
+                    $class = 'warning';
                 } elseif ($item->status == 'SYNC_STARTED') {
                     $class = 'primary';
                 } elseif ($item->status == 'PERSIST_FINISHED') {
