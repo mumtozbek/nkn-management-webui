@@ -6,6 +6,7 @@ use App\Models\Node;
 use App\UptimeRobot;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class RefreshUptime extends Command
 {
@@ -78,7 +79,7 @@ class RefreshUptime extends Command
                         } elseif ($json->error->code == '-45024') {
                             $status = 'PRUNING_DB';
                         } else {
-                            \Log::info("Node {$node->host} returned error:" . json_encode($json->error));
+                            Log::channel('daily')->alert("Node {$node->host} returned error:" . json_encode($json->error));
 
                             return true;
                         }
@@ -107,7 +108,7 @@ class RefreshUptime extends Command
                 'speed' => 0,
             ]);
 
-            \Log::info("Node {$node->host} is down!");
+            Log::channel('daily')->alert("Node {$node->host} is down!");
         });
     }
 
