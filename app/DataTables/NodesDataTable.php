@@ -53,6 +53,8 @@ class NodesDataTable extends DataTable
 
             })->filterColumn('blocks', function ($query, $keyword) {
 
+            })->filterColumn('rate', function ($query, $keyword) {
+
             })->filterColumn('status', function ($query, $keyword) {
                 $query->where('nodes.status', 'LIKE', "%" . $keyword . "%");
             })->rawColumns(['status', 'action']);
