@@ -15,12 +15,12 @@
                     @endif
 
                     <div class="chart-container" style="position: relative; height:500px; width:100%">
-                        <canvas id="myChart"></canvas>
+                        <canvas id="speedChart"></canvas>
                     </div>
 
                     <script>
-                        var ctx = document.getElementById('myChart');
-                        var myChart = new Chart(ctx, {!! json_encode($speedChartData) !!});
+                        var ctx = document.getElementById('speedChart');
+                        var speedChart = new Chart(ctx, {!! json_encode($speedChartData) !!});
                     </script>
                 </div>
             </div>
@@ -40,12 +40,12 @@
                     @endif
 
                     <div class="chart-container" style="position: relative; height:500px; width:100%">
-                        <canvas id="myChart"></canvas>
+                        <canvas id="blockChart"></canvas>
                     </div>
 
                     <script>
-                        var ctx = document.getElementById('myChart');
-                        var myChart = new Chart(ctx, {!! json_encode($blockChartData) !!});
+                        var ctx = document.getElementById('blockChart');
+                        var blockChart = new Chart(ctx, {!! json_encode($blockChartData) !!});
                     </script>
                 </div>
             </div>
