@@ -111,6 +111,8 @@ class RefreshUptime extends Command
             ]);
 
             Log::channel('daily')->alert("Node {$node->host} is down!");
+
+            mail(env('MAIL_ADMIN'), "Node {$node->host} is down!", "Node {$node->host} is down!", '', '-f' . env('MAIL_FROM_ADDRESS'));
         });
     }
 
