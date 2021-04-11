@@ -22,7 +22,7 @@ class Block extends Model
     {
         $data = [];
 
-        $query = DB::table('blocks')->selectRaw('node_id, ROUND(AVG(count), 2) AS count, DATE_FORMAT(created_at, "%Y-%m-%d %H:00:00") AS time')->groupByRaw('HOUR(created_at), DAY(created_at), node_id')->orderByRaw('DAY(created_at) ASC, HOUR(created_at) ASC, AVG(count) DESC');
+        $query = DB::table('blocks')->selectRaw('node_id, count, created_at AS time')->groupByRaw('created_at, node_id')->orderByRaw('created_at ASC, count DESC');
 
         if (!empty($id)) {
             $query->where('node_id', $id);
