@@ -51,6 +51,8 @@ class NodesDataTable extends DataTable
                 ]);
             })->filterColumn('speed', function ($query, $keyword) {
 
+            })->filterColumn('blocks', function ($query, $keyword) {
+
             })->filterColumn('status', function ($query, $keyword) {
                 $query->where('nodes.status', 'LIKE', "%" . $keyword . "%");
             })->rawColumns(['status', 'action']);
@@ -68,7 +70,8 @@ class NodesDataTable extends DataTable
             ->join('accounts', 'account_id', '=', 'accounts.id')
             ->join('providers', 'accounts.provider_id', '=', 'providers.id')
             ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider'])
-            ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed');
+            ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed')
+            ->selectRaw('(SELECT blocks.count FROM blocks WHERE blocks.node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS blocks');
     }
 
     /**
