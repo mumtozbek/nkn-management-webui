@@ -65,7 +65,8 @@ class NodesDataTable extends DataTable
         return $model
             ->join('accounts', 'account_id', '=', 'accounts.id')
             ->join('providers', 'accounts.provider_id', '=', 'providers.id')
-            ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider']);
+            ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider'])
+            ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed');
     }
 
     /**
