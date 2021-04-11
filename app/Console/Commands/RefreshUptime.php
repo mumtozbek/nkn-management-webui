@@ -67,11 +67,9 @@ class RefreshUptime extends Command
                             'uptime' => $result->uptime,
                         ]);
 
-                        if ($result->syncState != 'PERSIST_FINISHED') {
-                            $node->blocks()->create([
-                                'count' => $blocks,
-                            ]);
-                        }
+                        $node->blocks()->create([
+                            'count' => $blocks,
+                        ]);
 
                         $node->uptimes()->create([
                             'speed' => $speed,
