@@ -110,10 +110,6 @@ class RefreshUptime extends Command
                 'status' => 'OFFLINE',
             ]);
 
-            $node->uptimes()->create([
-                'speed' => 0,
-            ]);
-
             Log::channel('daily')->alert("Node {$node->host} is down!");
         });
     }
