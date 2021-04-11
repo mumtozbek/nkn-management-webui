@@ -18,14 +18,6 @@ class Account extends Model
     ];
 
     /**
-     * Default injected relations.
-     *
-     */
-    protected $with = [
-        'provider',
-    ];
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array

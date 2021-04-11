@@ -25,17 +25,6 @@ class Node extends Model
     ];
 
     /**
-     * Default injected relations.
-     */
-    protected $with = [
-        'account',
-    ];
-
-    protected $appends = [
-        'provider',
-    ];
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -79,10 +68,12 @@ class Node extends Model
     }
 
     /**
+     * Provider relation.
+     *
      * @return mixed
      */
-    public function getProviderAttribute()
+    public function provider()
     {
-        return $this->account->provider;
+        return $this->account->provider();
     }
 }
