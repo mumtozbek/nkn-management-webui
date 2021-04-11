@@ -71,7 +71,8 @@ class NodesDataTable extends DataTable
             ->join('providers', 'accounts.provider_id', '=', 'providers.id')
             ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider'])
             ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed')
-            ->selectRaw('(SELECT blocks.count FROM blocks WHERE blocks.node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS blocks');
+            ->selectRaw('(SELECT blocks.count FROM blocks WHERE blocks.node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS blocks')
+            ->selectRaw('ROUND(nodes.height/nodes.uptime, 6) AS rate');
     }
 
     /**
@@ -86,7 +87,7 @@ class NodesDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Bfrtip')
-            ->orderBy([9, 'desc'])
+            ->orderBy([12, 'desc'])
             ->buttons(
                 Button::make('create'),
                 Button::make('export'),
@@ -116,6 +117,7 @@ class NodesDataTable extends DataTable
             Column::make('relays'),
             Column::make('speed'),
             Column::make('uptime'),
+            Column::make('rate'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
