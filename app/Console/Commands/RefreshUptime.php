@@ -56,15 +56,19 @@ class RefreshUptime extends Command
                     if (!empty($json->result)) {
                         $result = $json->result;
                         $speed = ($result->relayMessageCount / $result->uptime) * 3600;
+                        $blocks = (int)$result->height - (int)$node->height;
 
                         $node->update([
                             'status' => $result->syncState,
                             'version' => $result->version,
                             'height' => $result->height,
-                            'blocks' => (int)$result->height - (int)$node->height,
                             'proposals' => $result->proposalSubmitted,
                             'relays' => $result->relayMessageCount,
                             'uptime' => $result->uptime,
+                        ]);
+
+                        $node->blocks()->create([
+                            'count' => $blocks,
                         ]);
 
                         $node->uptimes()->create([
