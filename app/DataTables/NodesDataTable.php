@@ -49,6 +49,8 @@ class NodesDataTable extends DataTable
                     '<a class="btn btn-danger" href="#" onclick="if(confirm(\'' . __('Do You really want to delete this node?') . '\')) document.getElementById(\'delete-' . $item->id . '\').submit()">' . __('Delete') . '</a>',
                     '</div>',
                 ]);
+            })->filterColumn('speed', function ($query, $keyword) {
+
             })->filterColumn('status', function ($query, $keyword) {
                 $query->where('nodes.status', 'LIKE', "%" . $keyword . "%");
             })->rawColumns(['status', 'action']);
