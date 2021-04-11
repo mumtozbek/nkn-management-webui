@@ -19,11 +19,7 @@ class NodesDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('account', function ($item) {
-                return $item->account->name;
-            })->addColumn('provider', function ($item) {
-                return $item->account->provider->name;
-            })->addColumn('status', function ($item) {
+            ->addColumn('status', function ($item) {
                 if ($item->status == 'OFFLINE') {
                     $class = 'danger';
                 } elseif ($item->status == 'GENERATE_ID') {
@@ -51,8 +47,11 @@ class NodesDataTable extends DataTable
                     '<a class="btn btn-danger" href="#" onclick="if(confirm(\'' . __('Do You really want to delete this node?') . '\')) document.getElementById(\'delete-' . $item->id . '\').submit()">' . __('Delete') . '</a>',
                     '</div>',
                 ]);
-            })
-            ->rawColumns(['status', 'action']);
+            })->filter(function ($query) {
+                if (request()->has('search.value')) {
+                    $query->where('nodes.status', 'LIKE', "%" . request('search.value') . "%");
+                }
+            })->rawColumns(['status', 'action']);
     }
 
     /**
@@ -63,7 +62,10 @@ class NodesDataTable extends DataTable
      */
     public function query(Node $model)
     {
-        return $model->newQuery();
+        return $model
+            ->join('accounts', 'account_id', '=', 'accounts.id')
+            ->join('providers', 'accounts.provider_id', '=', 'providers.id')
+            ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider']);
     }
 
     /**
@@ -97,8 +99,8 @@ class NodesDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('account', 'account.name'),
-            Column::make('provider'),
+            Column::make('account', 'accounts.name'),
+            Column::make('provider', 'providers.name'),
             Column::make('host'),
             Column::make('status'),
             Column::make('version'),

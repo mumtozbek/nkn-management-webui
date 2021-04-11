@@ -19,9 +19,7 @@ class AccountsDataTable extends DataTable
     {
         return datatables()
             ->eloquent($query)
-            ->addColumn('provider', function ($item) {
-                return $item->provider->name;
-            })->addColumn('action', function ($item) {
+            ->addColumn('action', function ($item) {
                 return implode('', [
                     '<form id="delete-' . $item->id . '" action="' . route('accounts.destroy', $item->id) . '" method="POST">',
                     '<input type="hidden" name="_method" value="DELETE">',
@@ -44,7 +42,9 @@ class AccountsDataTable extends DataTable
      */
     public function query(Account $model)
     {
-        return $model->newQuery();
+        return $model
+            ->join('providers', 'provider_id', '=', 'providers.id')
+            ->select(['accounts.*', 'providers.name AS provider']);
     }
 
     /**
@@ -84,7 +84,7 @@ class AccountsDataTable extends DataTable
         return [
             Column::make('id'),
             Column::make('name'),
-            Column::make('provider', 'provider.name'),
+            Column::make('provider', 'providers.name'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
