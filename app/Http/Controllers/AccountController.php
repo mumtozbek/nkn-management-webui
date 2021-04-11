@@ -27,7 +27,7 @@ class AccountController extends Controller
      */
     public function create()
     {
-        $providers = Provider::all();
+        $providers = Provider::orderBy('name', 'ASC')->get();
 
         return view('accounts.create', compact('providers'));
     }
@@ -67,7 +67,7 @@ class AccountController extends Controller
      */
     public function edit(Account $account)
     {
-        $providers = Provider::all();
+        $providers = Provider::orderBy('name', 'ASC')->get();
 
         return view('accounts.edit', compact('account', 'providers'));
     }
