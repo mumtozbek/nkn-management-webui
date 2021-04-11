@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Block;
 use App\Models\Node;
 use App\Models\Uptime;
 use Illuminate\Http\Request;
@@ -27,8 +28,9 @@ class HomeController extends Controller
      */
     public function index(Uptime $uptime)
     {
-        $chartData = Uptime::getChartData();
+        $speedChartData = Uptime::getChartData();
+        $blockChartData = Block::getChartData();
 
-        return view('home', compact('chartData'));
+        return view('home', compact('speedChartData', 'blockChartData'));
     }
 }
