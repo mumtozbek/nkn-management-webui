@@ -77,7 +77,7 @@ class NodesDataTable extends DataTable
             ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed')
             ->selectRaw('(SELECT blocks.count FROM blocks WHERE blocks.node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS blocks')
             ->selectRaw('ROUND((nodes.height * 100) / (SELECT MAX(height) FROM nodes), 2) AS percent')
-            ->selectRaw('ROUND((SELECT COUNT(*) FROM blocks WHERE blocks.node_id = nodes.id)/6, 2) AS hours');
+            ->selectRaw('ROUND( GREATEST(nodes.uptime / 3600, (SELECT COUNT(*) FROM blocks WHERE blocks.node_id = nodes.id) / 6), 2) AS hours');
     }
 
     /**
