@@ -84,6 +84,10 @@ class RefreshUptime extends Command
                             'response' => json_encode($json),
                         ]);
 
+                        if ($mined) {
+                            mail(env('MAIL_ADMIN'), "Node {$node->host} is just mined!", "Node {$node->host} is just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+                        }
+
                         return true;
                     } elseif (!empty($json->error)) {
                         if ($json->error->code == '-45022') {
@@ -111,18 +115,16 @@ class RefreshUptime extends Command
                 }
             }
 
+            if ($node->status != 'OFFLINE') {
+                Log::channel('daily')->alert("Node {$node->host} is down!");
+
+                mail(env('MAIL_ADMIN'), "Node {$node->host} is down!", "Node {$node->host} is down!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+            }
+
             // Connection failed, so log it
             $node->update([
                 'status' => 'OFFLINE',
             ]);
-
-            Log::channel('daily')->alert("Node {$node->host} is down!");
-
-            mail(env('MAIL_ADMIN'), "Node {$node->host} is down!", "Node {$node->host} is down!", '', '-f' . env('MAIL_FROM_ADDRESS'));
-
-            if ($mined) {
-                mail(env('MAIL_ADMIN'), "Node {$node->host} is just mined!", "Node {$node->host} is just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
-            }
         });
     }
 
