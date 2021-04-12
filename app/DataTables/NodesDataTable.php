@@ -53,7 +53,7 @@ class NodesDataTable extends DataTable
 
             })->filterColumn('blocks', function ($query, $keyword) {
 
-            })->filterColumn('rate', function ($query, $keyword) {
+            })->filterColumn('hours', function ($query, $keyword) {
 
             })->filterColumn('status', function ($query, $keyword) {
                 $query->where('nodes.status', 'LIKE', "%" . $keyword . "%");
@@ -74,7 +74,7 @@ class NodesDataTable extends DataTable
             ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider'])
             ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed')
             ->selectRaw('(SELECT blocks.count FROM blocks WHERE blocks.node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS blocks')
-            ->selectRaw('ROUND(nodes.height/nodes.uptime, 6) AS rate');
+            ->selectRaw('ROUND((SELECT COUNT(*) FROM blocks WHERE blocks.node_id = nodes.id)/6, 2) AS hours');
     }
 
     /**
@@ -115,11 +115,11 @@ class NodesDataTable extends DataTable
             Column::make('version'),
             Column::make('height'),
             Column::make('blocks'),
+            Column::make('hours'),
             Column::make('proposals'),
             Column::make('relays'),
             Column::make('speed'),
             Column::make('uptime'),
-            Column::make('rate'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
