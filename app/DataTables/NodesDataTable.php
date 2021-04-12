@@ -50,11 +50,13 @@ class NodesDataTable extends DataTable
                     '</div>',
                 ]);
             })->filterColumn('speed', function ($query, $keyword) {
-
+                return false;
             })->filterColumn('blocks', function ($query, $keyword) {
-
+                return false;
+            })->filterColumn('percent', function ($query, $keyword) {
+                return false;
             })->filterColumn('hours', function ($query, $keyword) {
-
+                return false;
             })->filterColumn('status', function ($query, $keyword) {
                 $query->where('nodes.status', 'LIKE', "%" . $keyword . "%");
             })->rawColumns(['status', 'action']);
@@ -74,6 +76,7 @@ class NodesDataTable extends DataTable
             ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider'])
             ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed')
             ->selectRaw('(SELECT blocks.count FROM blocks WHERE blocks.node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS blocks')
+            ->selectRaw('ROUND((nodes.height * 100) / (SELECT MAX(height) FROM nodes), 2) AS percent')
             ->selectRaw('ROUND((SELECT COUNT(*) FROM blocks WHERE blocks.node_id = nodes.id)/6, 2) AS hours');
     }
 
@@ -89,7 +92,7 @@ class NodesDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Bfrtip')
-            ->orderBy([11, 'desc'])
+            ->orderBy([12, 'desc'])
             ->buttons(
                 Button::make('create'),
                 Button::make('export'),
@@ -115,6 +118,7 @@ class NodesDataTable extends DataTable
             Column::make('version'),
             Column::make('height'),
             Column::make('blocks'),
+            Column::make('percent'),
             Column::make('hours'),
             Column::make('proposals'),
             Column::make('relays'),
