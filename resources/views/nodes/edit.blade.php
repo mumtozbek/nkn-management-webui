@@ -25,7 +25,7 @@
                                 <select name="account_id" id="account_id" class="form-control" required>
                                     <option value="">{{ __('Select the Account') }}</option>
                                     @foreach($accounts as $account)
-                                        <option value="{{ $account->id }}"{{ $account->is($node->account) ? ' selected' : '' }}>{{ $account->name }} ({{ $account->provider->name }})</option>
+                                        <option value="{{ $account->id }}"{{ $account->is($node->account) ? ' selected' : '' }}>{{ $account->provider->name }} ({{ $account->name }})</option>
                                     @endforeach
                                 </select>
                             </div>

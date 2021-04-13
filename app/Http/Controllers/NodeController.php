@@ -29,7 +29,7 @@ class NodeController extends Controller
      */
     public function create()
     {
-        $accounts = Account::orderBy('name', 'ASC')->get();
+        $accounts = Account::orderBy('provider_id', 'ASC')->orderBy('name', 'ASC')->get();
 
         return view('nodes.create', compact('accounts'));
     }
@@ -72,7 +72,7 @@ class NodeController extends Controller
      */
     public function edit(Node $node)
     {
-        $accounts = Account::orderBy('name', 'ASC')->get();
+        $accounts = Account::orderBy('provider_id', 'ASC')->orderBy('name', 'ASC')->get();
 
         return view('nodes.edit', compact('node', 'accounts'));
     }
