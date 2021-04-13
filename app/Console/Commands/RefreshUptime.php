@@ -85,7 +85,7 @@ class RefreshUptime extends Command
                         ]);
 
                         if ($mined) {
-                            mail(env('MAIL_ADMIN'), "Node {$node->host} is just mined!", "Node {$node->host} is just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+                            mail(env('MAIL_ADMIN'), "Node {$node->host} has just mined!", "Node {$node->host} is just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
                         }
 
                         return true;
