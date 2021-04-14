@@ -138,6 +138,10 @@ class Node extends Model
 
     public function reindex($json, $date)
     {
+        if (empty($json->result)) {
+            return false;
+        }
+
         $mined = false;
         $result = $json->result;
         $speed = ($result->relayMessageCount / $result->uptime) * 3600;
