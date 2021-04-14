@@ -40,17 +40,18 @@ class ReindexNodes extends Command
     public function handle()
     {
         DB::table('blocks')->truncate();
+        DB::table('proposals')->truncate();
 
         $nodes = Node::all();
 
         $nodes->each(function($node) {
             $node->update([
-                'status' => null,
-                'version' => null,
-                'height' => null,
-                'proposals' => null,
-                'relays' => null,
-                'uptime' => null,
+                'status' => 'WAIT_FOR_SYNCING',
+                'version' => '',
+                'height' => 0,
+                'proposals' => 0,
+                'relays' => 0,
+                'uptime' => 0,
             ]);
 
             $node->uptimes->sortBy('created_at')->each(function($uptime) use ($node) {
