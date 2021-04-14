@@ -16,6 +16,7 @@ class Block extends Model
      */
     protected $fillable = [
         'count',
+        'created_at',
     ];
 
     public static function getChartData($id = null)

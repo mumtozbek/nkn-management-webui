@@ -19,6 +19,13 @@ class Uptime extends Model
         'response',
     ];
 
+    /**
+     * Auto typecasting fields.
+     */
+    protected $casts = [
+        'response' => 'object',
+    ];
+
     public static function getChartData($id = null)
     {
         $data = [];

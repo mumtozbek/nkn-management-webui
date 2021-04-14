@@ -48,45 +48,13 @@ class RefreshUptime extends Command
 
         // Check all nodes' states
         $nodes->each(function ($node) {
-            $mined = false;
-
             $response = $this->getNodeState($node->host);
             if (is_string($response)) {
                 $json = json_decode($response);
 
                 if (!empty($json)) {
                     if (!empty($json->result)) {
-                        $result = $json->result;
-                        $speed = ($result->relayMessageCount / $result->uptime) * 3600;
-                        $blocks = (int)$result->height - (int)$node->height;
-
-                        if ($result->proposalSubmitted > $node->proposals) {
-                            $mined = true;
-                        }
-
-                        $node->update([
-                            'status' => $result->syncState,
-                            'version' => $result->version,
-                            'height' => $result->height,
-                            'proposals' => $result->proposalSubmitted,
-                            'relays' => $result->relayMessageCount,
-                            'uptime' => $result->uptime,
-                        ]);
-
-                        if ($result->syncState != 'PERSIST_FINISHED') {
-                            $node->blocks()->create([
-                                'count' => $blocks,
-                            ]);
-                        }
-
-                        $node->uptimes()->create([
-                            'speed' => $speed,
-                            'response' => json_encode($json),
-                        ]);
-
-                        if ($mined) {
-                            mail(env('MAIL_ADMIN'), "Node {$node->host} has just mined!", "Node {$node->host} is just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
-                        }
+                        $node->index($json);
 
                         return true;
                     } elseif (!empty($json->error)) {
