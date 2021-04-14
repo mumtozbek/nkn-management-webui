@@ -116,7 +116,7 @@ class Node extends Model
 
         $this->uptimes()->create([
             'speed' => $speed,
-            'response' => json_encode($json),
+            'response' => $json,
         ]);
 
         if ($result->syncState == 'PERSIST_FINISHED') {
