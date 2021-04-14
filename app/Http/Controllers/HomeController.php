@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Block;
-use App\Models\Node;
+use App\Models\Proposal;
 use App\Models\Uptime;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -30,7 +27,8 @@ class HomeController extends Controller
     {
         $speedChartData = Uptime::getChartData();
         $blockChartData = Block::getChartData();
+        $proposalChartData = Proposal::getChartData();
 
-        return view('home', compact('speedChartData', 'blockChartData'));
+        return view('home', compact('speedChartData', 'blockChartData', 'proposalChartData'));
     }
 }

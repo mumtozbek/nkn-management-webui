@@ -18,7 +18,6 @@ class Node extends Model
         'status',
         'version',
         'height',
-        'proposals',
         'relays',
         'uptime',
     ];
@@ -67,6 +66,16 @@ class Node extends Model
     }
 
     /**
+     * Proposals relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function proposals()
+    {
+        return $this->hasMany(Proposal::class);
+    }
+
+    /**
      * Account relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\belongsTo
@@ -93,7 +102,7 @@ class Node extends Model
         $speed = ($result->relayMessageCount / $result->uptime) * 3600;
         $blocks = (int)$result->height - (int)$this->height;
 
-        if ($result->proposalSubmitted > $this->proposals) {
+        if ($result->proposalSubmitted > $this->proposals()->count()) {
             $mined = true;
         }
 
@@ -101,40 +110,40 @@ class Node extends Model
             'status' => $result->syncState,
             'version' => $result->version,
             'height' => $result->height,
-            'proposals' => $result->proposalSubmitted,
             'relays' => $result->relayMessageCount,
             'uptime' => $result->uptime,
         ]);
-
-        if ($result->syncState != 'PERSIST_FINISHED') {
-            $this->blocks()->create([
-                'count' => $blocks,
-            ]);
-        }
 
         $this->uptimes()->create([
             'speed' => $speed,
             'response' => json_encode($json),
         ]);
 
-        if ($mined) {
-            mail(env('MAIL_ADMIN'), "Node {$this->host} has just mined!", "Node {$this->host} has just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+        if ($result->syncState == 'PERSIST_FINISHED') {
+            $this->proposals()->create([
+                'count' => (int)$mined,
+            ]);
+
+            if ($mined) {
+                mail(env('MAIL_ADMIN'), "Node {$this->host} has just mined!", "Node {$this->host} has just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+            }
+        } else {
+            if ($blocks > 0) {
+                $this->blocks()->create([
+                    'count' => $blocks,
+                ]);
+            }
         }
     }
 
     public function reindex($json, $date)
     {
-        $result = $json->result;
-
-        if ($result->syncState == 'PERSIST_FINISHED') {
-            return false;
-        }
-
         $mined = false;
+        $result = $json->result;
         $speed = ($result->relayMessageCount / $result->uptime) * 3600;
         $blocks = (int)$result->height - (int)$this->height;
 
-        if ($result->proposalSubmitted > $this->proposals) {
+        if ($result->proposalSubmitted > $this->proposals()->count()) {
             $mined = true;
         }
 
@@ -142,18 +151,22 @@ class Node extends Model
             'status' => $result->syncState,
             'version' => $result->version,
             'height' => $result->height,
-            'proposals' => $result->proposalSubmitted,
             'relays' => $result->relayMessageCount,
             'uptime' => $result->uptime,
         ]);
 
-        $this->blocks()->create([
-            'count' => $blocks,
-            'created_at' => $date,
-        ]);
-
-        if ($mined) {
-
+        if ($result->syncState == 'PERSIST_FINISHED') {
+            $this->proposals()->create([
+                'count' => (int)$mined,
+                'created_at' => $date,
+            ]);
+        } else {
+            if ($blocks > 0) {
+                $this->blocks()->create([
+                    'count' => $blocks,
+                    'created_at' => $date,
+                ]);
+            }
         }
     }
 }
