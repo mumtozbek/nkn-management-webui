@@ -57,6 +57,8 @@ class NodesDataTable extends DataTable
                 return false;
             })->filterColumn('hours', function ($query, $keyword) {
                 return false;
+            })->filterColumn('proposals', function ($query, $keyword) {
+                return false;
             })->filterColumn('status', function ($query, $keyword) {
                 $query->where('nodes.status', 'LIKE', "%" . $keyword . "%");
             })->rawColumns(['status', 'action']);
