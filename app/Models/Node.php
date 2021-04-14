@@ -102,7 +102,7 @@ class Node extends Model
         $speed = ($result->relayMessageCount / $result->uptime) * 3600;
         $blocks = (int)$result->height - (int)$this->height;
 
-        if ($result->proposalSubmitted > $this->proposals()->count()) {
+        if ($result->proposalSubmitted > $this->proposals()->sum('count')) {
             $mined = true;
         }
 
@@ -147,7 +147,7 @@ class Node extends Model
         $speed = ($result->relayMessageCount / $result->uptime) * 3600;
         $blocks = (int)$result->height - (int)$this->height;
 
-        if ($result->proposalSubmitted > $this->proposals()->count()) {
+        if ($result->proposalSubmitted > $this->proposals()->sum('count')) {
             $mined = true;
         }
 
