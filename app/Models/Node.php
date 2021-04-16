@@ -56,16 +56,6 @@ class Node extends Model
     }
 
     /**
-     * Blocks relation.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function blocks()
-    {
-        return $this->hasMany(Block::class);
-    }
-
-    /**
      * Proposals relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -100,7 +90,6 @@ class Node extends Model
         $mined = false;
         $result = $json->result;
         $speed = ($result->relayMessageCount / $result->uptime) * 3600;
-        $blocks = (int)$result->height - (int)$this->height;
 
         if ($result->proposalSubmitted > $this->proposals()->sum('count')) {
             $mined = true;
@@ -127,12 +116,6 @@ class Node extends Model
             if ($mined) {
                 mail(env('MAIL_ADMIN'), "Node {$this->host} has just mined!", "Node {$this->host} has just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
             }
-        } else {
-            if ($blocks > 0) {
-                $this->blocks()->create([
-                    'count' => $blocks,
-                ]);
-            }
         }
     }
 
@@ -145,7 +128,6 @@ class Node extends Model
         $mined = false;
         $result = $json->result;
         $speed = ($result->relayMessageCount / $result->uptime) * 3600;
-        $blocks = (int)$result->height - (int)$this->height;
 
         if ($result->proposalSubmitted > $this->proposals()->sum('count')) {
             $mined = true;
@@ -164,13 +146,6 @@ class Node extends Model
                 'count' => (int)$mined,
                 'created_at' => $date,
             ]);
-        } else {
-            if ($blocks > 0) {
-                $this->blocks()->create([
-                    'count' => $blocks,
-                    'created_at' => $date,
-                ]);
-            }
         }
     }
 }

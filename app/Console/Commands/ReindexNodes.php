@@ -39,7 +39,6 @@ class ReindexNodes extends Command
      */
     public function handle()
     {
-        DB::table('blocks')->truncate();
         DB::table('proposals')->truncate();
 
         $nodes = Node::all();

@@ -50,26 +50,6 @@
             </div>
         </div>
         <div class="row justify-content-center">
-            <div class="col-md-12 my-2">
-                <div class="card">
-                    <div class="card-header">
-                        {{ __('Block Stats') }}
-                    </div>
-
-                    <div class="card-body">
-                        <div class="chart-container" style="position: relative; height:500px; width:100%">
-                            <canvas id="blockChart"></canvas>
-                        </div>
-
-                        <script>
-                            var ctx = document.getElementById('blockChart');
-                            var blockChart = new Chart(ctx, {!! json_encode($blockChartData) !!});
-                        </script>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row justify-content-center">
             <div class="col-md-12 mt-2">
                 <div class="card">
                     <div class="card-header">{{ __('Proposal Stats') }}</div>

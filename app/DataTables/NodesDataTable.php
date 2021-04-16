@@ -51,10 +51,6 @@ class NodesDataTable extends DataTable
                 ]);
             })->filterColumn('speed', function ($query, $keyword) {
                 return false;
-            })->filterColumn('blocks', function ($query, $keyword) {
-                return false;
-            })->filterColumn('percent', function ($query, $keyword) {
-                return false;
             })->filterColumn('hours', function ($query, $keyword) {
                 return false;
             })->filterColumn('proposals', function ($query, $keyword) {
@@ -77,10 +73,8 @@ class NodesDataTable extends DataTable
             ->join('providers', 'accounts.provider_id', '=', 'providers.id')
             ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider'])
             ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed')
-            ->selectRaw('(SELECT blocks.count FROM blocks WHERE blocks.node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS blocks')
             ->selectRaw('(SELECT SUM(proposals.count) FROM proposals WHERE proposals.node_id = nodes.id) AS proposals')
-            ->selectRaw('ROUND((nodes.height * 100) / (SELECT MAX(height) FROM nodes), 2) AS percent')
-            ->selectRaw('ROUND( GREATEST(nodes.uptime / 3600, (SELECT COUNT(*) FROM blocks WHERE blocks.node_id = nodes.id) / 6), 2) AS hours');
+            ->selectRaw('ROUND( GREATEST(nodes.uptime / 3600, (SELECT COUNT(*) FROM uptimes WHERE uptimes.node_id = nodes.id) / 6), 2) AS hours');
     }
 
     /**
@@ -95,7 +89,7 @@ class NodesDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Bfrtip')
-            ->orderBy([12, 'desc'])
+            ->orderBy([9, 'desc'])
             ->buttons(
                 Button::make('create'),
                 Button::make('export'),
@@ -120,13 +114,9 @@ class NodesDataTable extends DataTable
             Column::make('status'),
             Column::make('version'),
             Column::make('height'),
-            Column::make('blocks'),
-            Column::make('percent'),
             Column::make('hours'),
             Column::make('proposals'),
-            Column::make('relays'),
             Column::make('speed'),
-            Column::make('uptime'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

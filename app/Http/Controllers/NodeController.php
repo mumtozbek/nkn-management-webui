@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\DataTables\NodesDataTable;
 use App\Models\Account;
-use App\Models\Block;
 use App\Models\Node;
 use App\Models\Proposal;
 use App\Models\Uptime;
@@ -60,10 +59,9 @@ class NodeController extends Controller
     public function show(Node $node)
     {
         $speedChartData = Uptime::getChartData($node->id);
-        $blockChartData = Block::getChartData($node->id);
         $proposalChartData = Proposal::getChartData($node->id);
 
-        return view('nodes.show', compact('node', 'speedChartData', 'blockChartData', 'proposalChartData'));
+        return view('nodes.show', compact('node', 'speedChartData', 'proposalChartData'));
     }
 
     /**

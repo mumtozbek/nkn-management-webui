@@ -26,9 +26,7 @@ class HomeController extends Controller
     public function index(Uptime $uptime)
     {
         $speedChartData = Uptime::getChartData();
-        $blockChartData = Block::getChartData();
-        $proposalChartData = Proposal::getChartData();
 
-        return view('home', compact('speedChartData', 'blockChartData', 'proposalChartData'));
+        return view('home', compact('speedChartData'));
     }
 }
