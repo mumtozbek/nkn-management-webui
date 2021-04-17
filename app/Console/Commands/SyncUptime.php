@@ -8,21 +8,21 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class RefreshUptime extends Command
+class SyncUptime extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'uptime:refresh';
+    protected $signature = 'sync:uptime';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Sync uptime information.';
 
     /**
      * Create a new command instance.
@@ -39,12 +39,9 @@ class RefreshUptime extends Command
      *
      * @return int
      */
-    public function handle(UptimeRobot $api)
+    public function handle()
     {
         $nodes = Node::all();
-
-        // Keep up with uptimerobot.com
-        $this->syncWithUptimeRobot($api, $nodes);
 
         // Check all nodes' states
         $nodes->each(function ($node) {
@@ -119,29 +116,5 @@ class RefreshUptime extends Command
         );
 
         return curl_exec($ch);
-    }
-
-    public function syncWithUptimeRobot($api, $nodes)
-    {
-        $alert_contacts = collect($api->getAlertContacts())->map(function ($item) {
-            return ['id' => $item['id'] . '_0_0'];
-        })->pluck('id')->implode('-');
-
-        $hosts = $nodes->pluck('host')->toArray();
-        $monitors = collect($api->getMonitors());
-
-        $monitorsToDelete = $monitors->filter(function ($item) use ($hosts) {
-            return !in_array($item['url'], $hosts);
-        });
-
-        foreach ($monitorsToDelete as $monitor) {
-            $api->deleteMonitor($monitor['id']);
-        }
-
-        $monitorsToCreate = $nodes->pluck('host')->diff($monitors->pluck('url'));
-
-        foreach ($monitorsToCreate as $host) {
-            $api->createMonitor($host, $alert_contacts);
-        }
     }
 }

@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\RefreshUptime::class,
+        Commands\SyncUptime::class,
+        Commands\SyncMonitor::class,
     ];
 
     /**
@@ -24,7 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('uptime:refresh')->everyTenMinutes();
+        $schedule->command('sync:uptime')->everyTenMinutes();
+        $schedule->command('sync:monitor')->everyThirtyMinutes();
     }
 
     /**
