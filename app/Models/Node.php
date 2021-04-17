@@ -20,6 +20,9 @@ class Node extends Model
         'height',
         'relays',
         'uptime',
+        'country',
+        'region',
+        'city',
     ];
 
     /**

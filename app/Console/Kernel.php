@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('sync:uptime')->everyTenMinutes();
         $schedule->command('sync:monitor')->everyThirtyMinutes();
+        $schedule->command('sync:location')->everyThirtyMinutes();
     }
 
     /**
