@@ -56,6 +56,8 @@ class NodesDataTable extends DataTable
                 return false;
             })->filterColumn('uptime', function ($query, $keyword) {
                 return false;
+            })->filterColumn('total_uptime', function ($query, $keyword) {
+                return false;
             })->filterColumn('proposals', function ($query, $keyword) {
                 return false;
             })->filterColumn('status', function ($query, $keyword) {
@@ -78,7 +80,8 @@ class NodesDataTable extends DataTable
             ->selectRaw('CONCAT(providers.name, " (", accounts.name, ")") AS account')
             ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed')
             ->selectRaw('(SELECT SUM(proposals.count) FROM proposals WHERE proposals.node_id = nodes.id) AS proposals')
-            ->selectRaw('ROUND( GREATEST(nodes.uptime / 3600, (SELECT COUNT(*) FROM uptimes WHERE uptimes.node_id = nodes.id) / 6), 2) AS uptime');
+            ->selectRaw('ROUND(nodes.uptime / 3600, 2) AS uptime')
+            ->selectRaw('ROUND(GREATEST(nodes.uptime / 3600, (SELECT COUNT(*) FROM uptimes WHERE uptimes.node_id = nodes.id) / 6), 2) AS total_uptime');
     }
 
     /**
@@ -93,7 +96,7 @@ class NodesDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Bfrtip')
-            ->orderBy([11, 'desc'])
+            ->orderBy([12, 'desc'])
             ->buttons(
                 Button::make('create'),
                 Button::make('export'),
@@ -121,6 +124,7 @@ class NodesDataTable extends DataTable
             Column::make('version'),
             Column::make('height'),
             Column::make('uptime'),
+            Column::make('total_uptime'),
             Column::make('proposals'),
             Column::make('speed'),
             Column::computed('action')
