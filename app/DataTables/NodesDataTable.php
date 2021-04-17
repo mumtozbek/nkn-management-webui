@@ -49,9 +49,12 @@ class NodesDataTable extends DataTable
                     '<a class="btn btn-danger" href="#" onclick="if(confirm(\'' . __('Do You really want to delete this node?') . '\')) document.getElementById(\'delete-' . $item->id . '\').submit()">' . __('Delete') . '</a>',
                     '</div>',
                 ]);
+            })->filterColumn('account', function ($query, $keyword) {
+                $query->where('accounts.name', 'LIKE', "%" . $keyword . "%")
+                    ->orWhere('providers.name', 'LIKE', "%" . $keyword . "%");
             })->filterColumn('speed', function ($query, $keyword) {
                 return false;
-            })->filterColumn('hours', function ($query, $keyword) {
+            })->filterColumn('uptime', function ($query, $keyword) {
                 return false;
             })->filterColumn('proposals', function ($query, $keyword) {
                 return false;
@@ -72,9 +75,10 @@ class NodesDataTable extends DataTable
             ->join('accounts', 'account_id', '=', 'accounts.id')
             ->join('providers', 'accounts.provider_id', '=', 'providers.id')
             ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider'])
+            ->selectRaw('CONCAT(providers.name, " (", accounts.name, ")") AS account')
             ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed')
             ->selectRaw('(SELECT SUM(proposals.count) FROM proposals WHERE proposals.node_id = nodes.id) AS proposals')
-            ->selectRaw('ROUND( GREATEST(nodes.uptime / 3600, (SELECT COUNT(*) FROM uptimes WHERE uptimes.node_id = nodes.id) / 6), 2) AS hours');
+            ->selectRaw('ROUND( GREATEST(nodes.uptime / 3600, (SELECT COUNT(*) FROM uptimes WHERE uptimes.node_id = nodes.id) / 6), 2) AS uptime');
     }
 
     /**
@@ -89,7 +93,7 @@ class NodesDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Bfrtip')
-            ->orderBy([9, 'desc'])
+            ->orderBy([8, 'desc'])
             ->buttons(
                 Button::make('create'),
                 Button::make('export'),
@@ -108,13 +112,12 @@ class NodesDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('account', 'accounts.name'),
-            Column::make('provider', 'providers.name'),
+            Column::make('account', 'account'),
             Column::make('host'),
             Column::make('status'),
             Column::make('version'),
             Column::make('height'),
-            Column::make('hours'),
+            Column::make('uptime'),
             Column::make('proposals'),
             Column::make('speed'),
             Column::computed('action')
