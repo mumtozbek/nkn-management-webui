@@ -54,7 +54,7 @@ class NodesDataTable extends DataTable
                     ->orWhere('providers.name', 'LIKE', "%" . $keyword . "%");
             })->filterColumn('speed', function ($query, $keyword) {
                 return false;
-            })->filterColumn('uptime', function ($query, $keyword) {
+            })->filterColumn('hours', function ($query, $keyword) {
                 return false;
             })->filterColumn('lifetime', function ($query, $keyword) {
                 return false;
@@ -76,11 +76,11 @@ class NodesDataTable extends DataTable
         return $model
             ->join('accounts', 'account_id', '=', 'accounts.id')
             ->join('providers', 'accounts.provider_id', '=', 'providers.id')
-            ->select(['nodes.*', 'accounts.name AS account', 'providers.name AS provider'])
+            ->select(['nodes.*'])
+            ->selectRaw('ROUND(nodes.uptime / 3600, 2) AS hours')
             ->selectRaw('CONCAT(providers.name, " (", accounts.name, ")") AS account')
-            ->selectRaw('(SELECT ROUND(AVG(uptimes.speed), 2) FROM uptimes WHERE uptimes.node_id = nodes.id) AS speed')
             ->selectRaw('(SELECT SUM(proposals.count) FROM proposals WHERE proposals.node_id = nodes.id) AS proposals')
-            ->selectRaw('ROUND(nodes.uptime / 3600, 2) AS uptime')
+            ->selectRaw('(SELECT speed FROM uptimes WHERE node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS speed')
             ->selectRaw('ROUND(GREATEST(nodes.uptime / 3600, (SELECT COUNT(*) FROM uptimes WHERE uptimes.node_id = nodes.id) / 6), 2) AS lifetime');
     }
 
@@ -115,7 +115,7 @@ class NodesDataTable extends DataTable
     {
         return [
             Column::make('id'),
-            Column::make('account', 'account'),
+            Column::make('account'),
             Column::make('host'),
             Column::make('country'),
             Column::make('region'),
@@ -123,7 +123,7 @@ class NodesDataTable extends DataTable
             Column::make('status'),
             Column::make('version'),
             Column::make('height'),
-            Column::make('uptime'),
+            Column::make('uptime', 'hours'),
             Column::make('lifetime'),
             Column::make('proposals'),
             Column::make('speed'),
