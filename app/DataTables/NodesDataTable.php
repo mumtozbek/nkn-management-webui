@@ -123,7 +123,7 @@ class NodesDataTable extends DataTable
             Column::make('status'),
             Column::make('version'),
             Column::make('height'),
-            Column::make('uptime', 'hours'),
+            Column::make('hours'),
             Column::make('lifetime'),
             Column::make('proposals'),
             Column::make('speed'),
