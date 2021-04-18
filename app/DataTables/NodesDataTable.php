@@ -80,7 +80,7 @@ class NodesDataTable extends DataTable
             ->selectRaw('ROUND(nodes.uptime / 3600, 2) AS hours')
             ->selectRaw('CONCAT(providers.name, " (", accounts.name, ")") AS account')
             ->selectRaw('(SELECT SUM(proposals.count) FROM proposals WHERE proposals.node_id = nodes.id) AS proposals')
-            ->selectRaw('(SELECT speed FROM uptimes WHERE node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS speed')
+            ->selectRaw('(SELECT ROUND(speed, 2) FROM uptimes WHERE node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS speed')
             ->selectRaw('ROUND(GREATEST(nodes.uptime / 3600, (SELECT COUNT(*) FROM uptimes WHERE uptimes.node_id = nodes.id) / 6), 2) AS lifetime');
     }
 
