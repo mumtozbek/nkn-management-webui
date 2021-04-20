@@ -171,7 +171,7 @@ class Node extends Model
         ]);
 
         if ($mined) {
-            Log::channel('debug.reindex')->info("Node {$this->host} has just mined!");
+            Log::debug("Node {$this->host} has just mined!");
         }
 
         Cache::set('nodes.mined.' . $this->id, $json->result->proposalSubmitted);
