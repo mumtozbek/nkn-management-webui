@@ -46,13 +46,20 @@ class ReindexNodes extends Command
         $nodes = Node::all();
 
         $nodes->each(function($node) {
+            $nodeState = [
+                'status' => $node->status,
+                'version' => $node->version,
+                'height' => $node->height,
+                'relays' => $node->relays,
+                'uptime' => $node->uptime,
+            ];
+
             Cache::forget('nodes.mined.' . $node->id);
 
             $node->update([
                 'status' => 'WAIT_FOR_SYNCING',
                 'version' => '',
                 'height' => 0,
-                'proposals' => 0,
                 'relays' => 0,
                 'uptime' => 0,
             ]);
@@ -60,6 +67,8 @@ class ReindexNodes extends Command
             $node->uptimes->sortBy('created_at')->each(function($uptime) use ($node) {
                 $node->reindex($uptime->response, $uptime->created_at);
             });
+
+            $node->update($nodeState);
         });
 
         return 0;
