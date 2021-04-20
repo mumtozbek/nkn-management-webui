@@ -46,7 +46,7 @@ class ReindexNodes extends Command
         $nodes = Node::all();
 
         $nodes->each(function($node) {
-            Cache::forget('nodes.mined.' . $this->id);
+            Cache::forget('nodes.mined.' . $node->id);
 
             $node->update([
                 'status' => 'WAIT_FOR_SYNCING',
