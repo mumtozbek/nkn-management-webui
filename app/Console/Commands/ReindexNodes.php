@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Node;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ReindexNodes extends Command
@@ -45,6 +46,8 @@ class ReindexNodes extends Command
         $nodes = Node::all();
 
         $nodes->each(function($node) {
+            Cache::forget('nodes.mined.' . $this->id);
+
             $node->update([
                 'status' => 'WAIT_FOR_SYNCING',
                 'version' => '',

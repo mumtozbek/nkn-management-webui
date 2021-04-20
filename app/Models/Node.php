@@ -104,7 +104,7 @@ class Node extends Model
     {
         $count = (int)$json->result->height -(int)$this->height;
 
-        if ($json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id)) {
+        if (Cache::has('nodes.mined.' . $this->id) && $json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id, 0)) {
             $mined = 1;
         } else {
             $mined = 0;
@@ -146,7 +146,7 @@ class Node extends Model
 
         $count = (int)$json->result->height -(int)$this->height;
 
-        if ($json->result->proposalSubmitted > Cache::get('nodes.remined.' . $this->id)) {
+        if (Cache::has('nodes.mined.' . $this->id) && $json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id, 0)) {
             $mined = 1;
         } else {
             $mined = 0;
@@ -174,6 +174,6 @@ class Node extends Model
             Log::channel('debug.reindex')->info("Node {$this->host} has just mined!");
         }
 
-        Cache::set('nodes.remined.' . $this->id, $json->result->proposalSubmitted);
+        Cache::set('nodes.mined.' . $this->id, $json->result->proposalSubmitted);
     }
 }
