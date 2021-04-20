@@ -105,7 +105,7 @@ class Node extends Model
         $count = (int)$json->result->height -(int)$this->height;
 
         if (Cache::has('nodes.mined.' . $this->id) && $json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id, 0)) {
-            $mined = 1;
+            $mined = $json->result->proposalSubmitted - Cache::get('nodes.mined.' . $this->id, 0);
         } else {
             $mined = 0;
         }
@@ -124,7 +124,7 @@ class Node extends Model
         ]);
 
         $this->blocks()->create([
-            'count' => $count,
+            'count' => ($this->blocks()->count() > 0 ? $count : 0),
         ]);
 
         $this->proposals()->create([
@@ -147,7 +147,7 @@ class Node extends Model
         $count = (int)$json->result->height -(int)$this->height;
 
         if (Cache::has('nodes.mined.' . $this->id) && $json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id, 0)) {
-            $mined = 1;
+            $mined = $json->result->proposalSubmitted - Cache::get('nodes.mined.' . $this->id, 0);
         } else {
             $mined = 0;
         }
@@ -161,7 +161,7 @@ class Node extends Model
         ]);
 
         $this->blocks()->create([
-            'count' => $count,
+            'count' => ($this->blocks()->count() > 0 ? $count : 0),
             'created_at' => $date,
         ]);
 
