@@ -39,7 +39,7 @@ class SyncMonitor extends Command
      */
     public function handle(UptimeRobot $api)
     {
-        $nodes = Node::whereNot('status', 'OFFLINE')->get();
+        $nodes = Node::where('status', '!=', 'OFFLINE')->get();
 
         $this->syncWithUptimeRobot($api, $nodes);
     }
