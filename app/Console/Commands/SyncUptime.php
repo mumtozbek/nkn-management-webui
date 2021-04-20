@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Node;
-use App\UptimeRobot;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class SyncUptime extends Command

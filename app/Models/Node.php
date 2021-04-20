@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class Node extends Model
 {
@@ -59,6 +61,16 @@ class Node extends Model
     }
 
     /**
+     * Blocks relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function blocks()
+    {
+        return $this->hasMany(Block::class);
+    }
+
+    /**
      * Proposals relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -90,36 +102,40 @@ class Node extends Model
 
     public function index($json)
     {
-        $mined = false;
-        $result = $json->result;
-        $speed = ($result->relayMessageCount / $result->uptime) * 3600;
+        $count = (int)$json->result->height -(int)$this->height;
 
-        if ($result->proposalSubmitted > $this->proposals()->sum('count')) {
-            $mined = true;
+        if ($json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id)) {
+            $mined = 1;
+        } else {
+            $mined = 0;
         }
 
         $this->update([
-            'status' => $result->syncState,
-            'version' => $result->version,
-            'height' => $result->height,
-            'relays' => $result->relayMessageCount,
-            'uptime' => $result->uptime,
+            'status' => $json->result->syncState,
+            'version' => $json->result->version,
+            'height' => $json->result->height,
+            'relays' => $json->result->relayMessageCount,
+            'uptime' => $json->result->uptime,
         ]);
 
         $this->uptimes()->create([
-            'speed' => $speed,
+            'speed' => (($json->result->relayMessageCount / $json->result->uptime) * 3600),
             'response' => $json,
         ]);
 
-        if ($result->syncState == 'PERSIST_FINISHED') {
-            $this->proposals()->create([
-                'count' => (int)$mined,
-            ]);
+        $this->blocks()->create([
+            'count' => $count,
+        ]);
 
-            if ($mined) {
-                mail(env('MAIL_ADMIN'), "Node {$this->host} has just mined!", "Node {$this->host} has just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
-            }
+        $this->proposals()->create([
+            'count' => $mined,
+        ]);
+
+        if ($mined) {
+            mail(env('MAIL_ADMIN'), "Node {$this->host} has just mined!", "Node {$this->host} has just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
         }
+
+        Cache::forever('nodes.mined.' . $this->id, $json->result->proposalSubmitted);
     }
 
     public function reindex($json, $date)
@@ -128,27 +144,36 @@ class Node extends Model
             return false;
         }
 
-        $mined = false;
-        $result = $json->result;
-        $speed = ($result->relayMessageCount / $result->uptime) * 3600;
+        $count = (int)$json->result->height -(int)$this->height;
 
-        if ($result->proposalSubmitted > $this->proposals()->sum('count')) {
-            $mined = true;
+        if ($json->result->proposalSubmitted > Cache::get('nodes.remined.' . $this->id)) {
+            $mined = 1;
+        } else {
+            $mined = 0;
         }
 
         $this->update([
-            'status' => $result->syncState,
-            'version' => $result->version,
-            'height' => $result->height,
-            'relays' => $result->relayMessageCount,
-            'uptime' => $result->uptime,
+            'status' => $json->result->syncState,
+            'version' => $json->result->version,
+            'height' => $json->result->height,
+            'relays' => $json->result->relayMessageCount,
+            'uptime' => $json->result->uptime,
         ]);
 
-        if ($result->syncState == 'PERSIST_FINISHED') {
-            $this->proposals()->create([
-                'count' => (int)$mined,
-                'created_at' => $date,
-            ]);
+        $this->blocks()->create([
+            'count' => $count,
+            'created_at' => $date,
+        ]);
+
+        $this->proposals()->create([
+            'count' => $mined,
+            'created_at' => $date,
+        ]);
+
+        if ($mined) {
+            Log::channel('debug.reindex')->info("Node {$this->host} has just mined!");
         }
+
+        Cache::set('nodes.remined.' . $this->id, $json->result->proposalSubmitted);
     }
 }
