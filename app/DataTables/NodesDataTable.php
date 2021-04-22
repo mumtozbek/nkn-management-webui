@@ -50,8 +50,9 @@ class NodesDataTable extends DataTable
                     '</div>',
                 ]);
             })->filterColumn('account', function ($query, $keyword) {
-                $query->where('accounts.name', 'LIKE', "%" . $keyword . "%")
-                    ->orWhere('providers.name', 'LIKE', "%" . $keyword . "%");
+                $query->whereRaw('CONCAT(providers.name, " (", accounts.name, ")") LIKE "%' . trim($keyword) . '%"')
+                    ->orWhere('providers.name', 'LIKE', "%" . $keyword . "%")
+                    ->orWhere('accounts.name', 'LIKE', "%" . $keyword . "%");
             })->filterColumn('speed', function ($query, $keyword) {
                 return false;
             })->filterColumn('hours', function ($query, $keyword) {
