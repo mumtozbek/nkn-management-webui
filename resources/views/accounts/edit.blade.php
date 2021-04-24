@@ -31,6 +31,26 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="username">{{ __('Username') }}</label>
+                                <input type="text" name="username" id="username" value="{{ old('username', $account->username) }}" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">{{ __('Password') }}</label>
+                                <input type="text" name="password" id="password" value="{{ old('password', $account->password) }}" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="name">{{ __('SSH Key') }}</label>
+                                <select name="ssh_key_id" id="ssh_key_id" class="form-control" required>
+                                    <option value="">{{ __('Select the SSH Key') }}</option>
+                                    @foreach($ssh_keys as $ssh_key)
+                                        <option value="{{ $ssh_key->id }}"{{ $ssh_key->is($account->sshKey) ? ' selected' : '' }}>{{ $ssh_key->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <a href="{{ route('accounts.index') }}" class="btn btn-secondary">
                                     {{ __('Back to list') }}
                                 </a>

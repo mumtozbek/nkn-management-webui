@@ -42,8 +42,8 @@
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownUser">
-                        <a class="dropdown-item" href="">
-                            {{ __('My Profile') }}
+                        <a class="dropdown-item" href="{{ route('ssh-keys.index') }}">
+                            {{ __('SSH Keys') }}
                         </a>
 
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

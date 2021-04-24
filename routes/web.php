@@ -22,3 +22,5 @@ Route::resource('providers', App\Http\Controllers\ProviderController::class)->mi
 Route::resource('accounts', App\Http\Controllers\AccountController::class)->middleware('auth');
 
 Route::resource('nodes', App\Http\Controllers\NodeController::class)->middleware('auth');
+
+Route::resource('ssh-keys', App\Http\Controllers\SshKeyController::class)->middleware('auth');

@@ -6,11 +6,11 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        {{ __('Create a Account') }}
+                        {{ __('Create a SSH Key') }}
                     </div>
 
                     <div class="card-body">
-                        <form action="{{ route('accounts.store') }}" method="POST">
+                        <form action="{{ route('ssh-keys.store') }}" method="POST">
                             @csrf
 
                             <div class="form-group">
@@ -19,18 +19,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="provider_id">{{ __('Provider') }}</label>
-                                <select name="provider_id" id="provider_id" class="form-control" required>
-                                    <option value="">{{ __('Select the Provider') }}</option>
-                                    @foreach($providers as $provider)
-                                        <option value="{{ $provider->id }}"{{ $provider->id == old('provider_id') ? ' selected' : '' }}>{{ $provider->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="username">{{ __('Username') }}</label>
-                                <input type="text" name="username" id="username" value="{{ old('username') }}" class="form-control">
+                                <label for="private_key">{{ __('Private Key') }}</label>
+                                <textarea name="private_key" id="private_key" class="form-control">{{ old('private_key') }}</textarea>
                             </div>
 
                             <div class="form-group">
@@ -39,17 +29,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="name">{{ __('SSH Key') }}</label>
-                                <select name="ssh_key_id" id="ssh_key_id" class="form-control" required>
-                                    <option value="">{{ __('Select the SSH Key') }}</option>
-                                    @foreach($ssh_keys as $ssh_key)
-                                        <option value="{{ $ssh_key->id }}"{{ $ssh_key->id == old('ssh_key_id') ? ' selected' : '' }}>{{ $ssh_key->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <a href="{{ route('accounts.index') }}" class="btn btn-secondary">
+                                <a href="{{ route('ssh-keys.index') }}" class="btn btn-secondary">
                                     {{ __('Back to list') }}
                                 </a>
 

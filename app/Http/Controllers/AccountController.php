@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\AccountsDataTable;
 use App\Models\Account;
 use App\Models\Provider;
+use App\Models\SshKey;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
@@ -28,8 +29,9 @@ class AccountController extends Controller
     public function create()
     {
         $providers = Provider::orderBy('name', 'ASC')->get();
+        $ssh_keys = SshKey::all();
 
-        return view('accounts.create', compact('providers'));
+        return view('accounts.create', compact('providers', 'ssh_keys'));
     }
 
     /**
@@ -68,8 +70,9 @@ class AccountController extends Controller
     public function edit(Account $account)
     {
         $providers = Provider::orderBy('name', 'ASC')->get();
+        $ssh_keys = SshKey::all();
 
-        return view('accounts.edit', compact('account', 'providers'));
+        return view('accounts.edit', compact('account', 'providers', 'ssh_keys'));
     }
 
     /**
