@@ -22,7 +22,7 @@
 
                             <div class="form-group">
                                 <label for="private_key">{{ __('Private Key') }}</label>
-                                <textarea name="private_key" id="private_key" class="form-control">{{ old('private_key', $ssh_key->private_key) }}</textarea>
+                                <textarea name="private_key" id="private_key" class="form-control" rows="15">{{ old('private_key', $ssh_key->private_key) }}</textarea>
                             </div>
 
                             <div class="form-group">
