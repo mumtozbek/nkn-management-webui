@@ -23,4 +23,6 @@ Route::resource('accounts', App\Http\Controllers\AccountController::class)->midd
 
 Route::resource('nodes', App\Http\Controllers\NodeController::class)->middleware('auth');
 
+Route::resource('wallets', App\Http\Controllers\WalletController::class)->middleware('auth');
+
 Route::resource('ssh-keys', App\Http\Controllers\SshKeyController::class)->middleware('auth');
