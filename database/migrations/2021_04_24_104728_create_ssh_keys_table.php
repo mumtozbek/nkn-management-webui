@@ -17,7 +17,7 @@ class CreateSshKeysTable extends Migration
             $table->id();
             $table->string('name');
             $table->text('private_key');
-            $table->string('password', 32);
+            $table->string('password', 32)->nullable(true);
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@ class AddCredentialsColumnsToAccountsTable extends Migration
     {
         Schema::table('accounts', function (Blueprint $table) {
             $table->string('username', 32)->after('name');
-            $table->string('password', 32)->after('username');
+            $table->string('password', 32)->nullable(true)->after('username');
             $table->unsignedBigInteger('ssh_key_id')->after('password')->nullable();
 
             $table->foreign('ssh_key_id')->references('id')->on('accounts')->onUpdate('cascade')->onDelete('cascade');
