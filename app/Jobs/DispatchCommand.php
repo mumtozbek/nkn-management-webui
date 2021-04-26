@@ -46,6 +46,12 @@ class DispatchCommand implements ShouldQueue
             $this->fail(new Exception("$this->node->host: AUTH FAILED."));
         }
 
-        Log::info("$this->node->host: " . $ssh->exec("echo $this->node->account->sshKey->password | sudo -S " . $this->query) . '.');
+        if ($this->node->account->sshKey->password) {
+            $result = $ssh->exec("echo $this->node->account->sshKey->password | sudo -S " . $this->query);
+        } else {
+            $result = $ssh->exec("sudo -S " . $this->query);
+        }
+
+        Log::info("$this->node->host: " . $result . '.');
     }
 }
