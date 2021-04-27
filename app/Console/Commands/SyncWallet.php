@@ -46,64 +46,57 @@ class SyncWallet extends Command
 
         foreach ($nodes as $node) {
             if (empty($node->account->sshKey->private_key)) {
-                echo "{$node->host}: SKIPPED.\n";
-                continue;
-            }
+                echo "{$node->host}: SKIPPED\n";
+            } else {
+                try {
+                    $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
 
-            echo "{$node->host}: STARTED.\n";
+                    $ssh = new SSH2($node->host);
+                    $ssh->setTimeout(15);
+                    $ssh->login($node->account->username, $key);
 
-            try {
-                $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
+                    $keystore = json_decode($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json"));
+                    $password = $ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd");
 
-                $ssh = new SSH2($node->host);
-                $ssh->setTimeout(15);
-                $ssh->login($node->account->username, $key);
-
-                $keystore = json_decode($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json"));
-                $password = $ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd");
-
-                if (empty($keystore->Address)) {
-                    throw new Exception("Could not fetch the wallet keystore.");
-                }
-
-                $wallet = Wallet::where('address', $keystore->Address)->first();
-                if ($wallet) {
-                    if ($wallet->node_id != $node->id) {
-                        echo "{$node->host}: DETACHED {$keystore->Address}.\n";
+                    if (empty($keystore->Address)) {
+                        throw new Exception("Could not fetch the wallet keystore.");
                     }
 
-                    $wallet->update([
-                        'node_id' => $node->id,
-                    ]);
-                } else {
-                    echo "{$node->host}: ATTACHED {$keystore->Address}.\n";
+                    $wallet = Wallet::where('address', $keystore->Address)->first();
+                    if ($wallet) {
+                        if ($wallet->node_id != $node->id) {
+                            echo "{$node->host}: DETACHED {$keystore->Address}\n";
+                        }
 
-                    if ($node->wallet) {
-                        echo "{$node->host}: DETACHED {$node->wallet->address}.\n";
+                        $wallet->update([
+                            'node_id' => $node->id,
+                        ]);
+                    } else {
+                        if ($node->wallet) {
+                            echo "{$node->host}: DETACHED {$keystore->Address}\n";
 
-                        $node->wallet->update([
-                            'node_id' => null,
+                            $node->wallet->update([
+                                'node_id' => null,
+                            ]);
+                        }
+
+                        Wallet::create([
+                            'node_id' => $node->id,
+                            'address' => $keystore->Address,
+                            'keystore' => json_encode($keystore),
+                            'password' => $password,
                         ]);
                     }
 
-                    Wallet::create([
-                        'node_id' => $node->id,
-                        'address' => $keystore->Address,
-                        'keystore' => json_encode($keystore),
-                        'password' => $password,
-                    ]);
-                }
+                    if ($ssh->isConnected()) {
+                        $ssh->disconnect();
+                    }
 
-                if ($ssh->isConnected()) {
-                    $ssh->disconnect();
+                    echo "{$node->host}: ATTACHED {$keystore->Address}\n";
+                } catch (Exception $exception) {
+                    echo "{$node->host}: FAILED (" . $exception->getMessage() . ")\n";
                 }
-            } catch (Exception $exception) {
-                echo "{$node->host}: FAILED (" . $exception->getMessage() . ").\n";
             }
-
-            echo "{$node->host}: FINISHED.\n";
         }
-
-        return 0;
     }
 }
