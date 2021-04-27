@@ -22,15 +22,6 @@ class Wallet extends Model
     ];
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'keystore' => 'object',
-    ];
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array

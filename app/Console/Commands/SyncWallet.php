@@ -76,7 +76,7 @@ class SyncWallet extends Command
                     $wallet = Wallet::create([
                         'node_id' => $node->id,
                         'address' => $keystore->Address,
-                        'keystore' => $keystore,
+                        'keystore' => json_encode($keystore),
                         'password' => $password,
                     ]);
                 }
