@@ -43,7 +43,7 @@ class SyncWallet extends Command
      */
     public function handle()
     {
-        $nodes = Node::select(['nodes.*', 'wallets.address'])->leftJoin('wallets', 'wallets.node_id', '=', 'nodes.id')->where('host', '213.230.71.36')->whereNull('wallets.address')->get();
+        $nodes = Node::select(['nodes.*', 'wallets.address'])->leftJoin('wallets', 'wallets.node_id', '=', 'nodes.id')->whereNull('wallets.address')->get();
 
         foreach($nodes as $node) {
             $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
