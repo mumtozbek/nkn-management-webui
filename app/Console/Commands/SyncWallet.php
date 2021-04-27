@@ -51,6 +51,8 @@ class SyncWallet extends Command
             $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
 
             $ssh = new SSH2($node->host);
+            $ssh->setTimeout(1);
+
             if ($ssh->login($node->account->username, $key)) {
                 $keystore = json_decode($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json"));
                 $password = $ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd");
@@ -81,6 +83,10 @@ class SyncWallet extends Command
                 }
             } else {
                 echo "$node->host: AUTH FAILED.\n";
+            }
+
+            if ($ssh->isConnected()) {
+                $ssh->disconnect();
             }
         }
 
