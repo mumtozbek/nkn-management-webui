@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Node;
-use Complex\Exception;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -22,6 +22,13 @@ class DispatchCommand implements ShouldQueue
     private $query;
 
     /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
+
+    /**
      * Create a new job instance.
      *
      * @return void
@@ -33,25 +40,41 @@ class DispatchCommand implements ShouldQueue
     }
 
     /**
+     * Calculate the number of seconds to wait before retrying the job.
+     *
+     * @return array
+     */
+    public function backoff()
+    {
+        return [3, 6, 10];
+    }
+
+    /**
      * Execute the job.
      *
      * @return void
      */
     public function handle()
     {
-        $key = PublicKeyLoader::load($this->node->account->sshKey->private_key, $this->node->account->sshKey->password);
+        try {
+            $key = PublicKeyLoader::load($this->node->account->sshKey->private_key, $this->node->account->sshKey->password);
 
-        $ssh = new SSH2($this->node->host);
-        if (!$ssh->login($this->node->account->username, $key)) {
-            $this->fail(new Exception("{$this->node->host}: AUTH FAILED."));
+            $ssh = new SSH2($this->node->host);
+            if (!$ssh->login($this->node->account->username, $key)) {
+                throw new Exception("{$this->node->host}: AUTH FAILED.");
+            }
+
+            if ($this->node->account->password) {
+                $result = $ssh->exec("echo '{$this->node->account->password}' | sudo -S {$this->query}");
+            } else {
+                $result = $ssh->exec("sudo {$this->query}");
+            }
+
+            $result = trim(preg_replace("#\[sudo\] password for {$this->node->account->username}\:#", '', $result));
+
+            Log::info($result);
+        } catch (Exception $exception) {
+            $this->fail($exception);
         }
-
-        if ($this->node->account->password) {
-            $result = $ssh->exec("echo {$this->node->account->password} | sudo -S " . $this->query);
-        } else {
-            $result = $ssh->exec("sudo -S {$this->query}");
-        }
-
-        Log::info("{$this->node->host}: " . $result . '.');
     }
 }
