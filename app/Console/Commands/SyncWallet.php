@@ -43,7 +43,7 @@ class SyncWallet extends Command
      */
     public function handle()
     {
-        $nodes = Node::select(['nodes.*', 'wallets.address'])->leftJoin('wallets', 'wallets.node_id', '=', 'nodes.id')->whereNull('wallets.address')->where('host', '52.252.131.195')->get();
+        $nodes = Node::select(['nodes.*', 'wallets.address'])->leftJoin('wallets', 'wallets.node_id', '=', 'nodes.id')->whereNull('wallets.address')->get();
 
         foreach($nodes as $node) {
             echo "SYNC STARTED: $node->host.\n";
