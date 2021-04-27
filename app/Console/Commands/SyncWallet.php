@@ -56,7 +56,7 @@ class SyncWallet extends Command
                     $ssh->login($node->account->username, $key);
 
                     $keystore = json_decode($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json"));
-                    $password = $ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd");
+                    $password = trim($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd"));
 
                     if (empty($keystore->Address)) {
                         throw new Exception("Could not fetch the wallet keystore.");
