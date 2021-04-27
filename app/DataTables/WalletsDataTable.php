@@ -86,7 +86,7 @@ class WalletsDataTable extends DataTable
         return [
             Column::make('id'),
             Column::make('address'),
-            Column::make('node', 'node.name'),
+            Column::make('node', 'nodes.host'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
