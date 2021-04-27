@@ -15,10 +15,10 @@ class Wallet extends Model
      * @var array
      */
     protected $fillable = [
+        'node_id',
         'address',
         'keystore',
         'password',
-        'node_id',
     ];
 
     /**
@@ -38,7 +38,7 @@ class Wallet extends Model
     public function rules()
     {
         return [
-            'node_id' => 'required|exists:nodes,id',
+            'node_id' => 'required|exists:nodes,id|unique:wallets,node_id,' . $this->id,
             'address' => 'required|string|min:36|max:36|unique:wallets,address,' . $this->id,
             'keystore' => 'required|string',
             'password' => 'required|string',
