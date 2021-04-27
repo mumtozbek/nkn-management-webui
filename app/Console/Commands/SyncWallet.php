@@ -42,10 +42,15 @@ class SyncWallet extends Command
      */
     public function handle()
     {
-        $nodes = Node::select(['nodes.*', 'wallets.address'])->leftJoin('wallets', 'wallets.node_id', '=', 'nodes.id')->whereNull('wallets.address')->get();
+        $nodes = Node::all();
 
         foreach ($nodes as $node) {
-            echo "SYNC STARTED: $node->host.\n";
+            if (empty($node->account->sshKey->private_key)) {
+                echo "{$node->host}: SKIPPED.\n";
+                continue;
+            }
+
+            echo "{$node->host}: STARTED.\n";
 
             try {
                 $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
@@ -64,16 +69,24 @@ class SyncWallet extends Command
                 $wallet = Wallet::where('address', $keystore->Address)->first();
                 if ($wallet) {
                     if ($wallet->node_id != $node->id) {
-                        echo "$node->host: DEATTACHED $keystore->Address.\n";
+                        echo "{$node->host}: DETACHED {$keystore->Address}.\n";
+                    }
 
-                        $wallet = $wallet->update([
-                            'node_id' => $node->id,
+                    $wallet->update([
+                        'node_id' => $node->id,
+                    ]);
+                } else {
+                    echo "{$node->host}: ATTACHED {$keystore->Address}.\n";
+
+                    if ($node->wallet) {
+                        echo "{$node->host}: DETACHED {$node->wallet->address}.\n";
+
+                        $node->wallet->update([
+                            'node_id' => null,
                         ]);
                     }
-                } else {
-                    echo "$node->host: ATTACHED $keystore->Address.\n";
 
-                    $wallet = Wallet::create([
+                    Wallet::create([
                         'node_id' => $node->id,
                         'address' => $keystore->Address,
                         'keystore' => json_encode($keystore),
@@ -85,7 +98,7 @@ class SyncWallet extends Command
                     $ssh->disconnect();
                 }
             } catch (Exception $exception) {
-                echo "$node->host: FAILED (" . $exception->getMessage() . ").\n";
+                echo "{$node->host}: FAILED (" . $exception->getMessage() . ").\n";
             }
         }
 

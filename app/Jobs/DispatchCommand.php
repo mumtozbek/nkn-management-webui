@@ -43,15 +43,15 @@ class DispatchCommand implements ShouldQueue
 
         $ssh = new SSH2($this->node->host);
         if (!$ssh->login($this->node->account->username, $key)) {
-            $this->fail(new Exception("$this->node->host: AUTH FAILED."));
+            $this->fail(new Exception("{$this->node->host}: AUTH FAILED."));
         }
 
         if ($this->node->account->password) {
-            $result = $ssh->exec("echo " . $this->node->account->password . " | sudo -S " . $this->query);
+            $result = $ssh->exec("echo {$this->node->account->password} | sudo -S " . $this->query);
         } else {
-            $result = $ssh->exec("sudo -S " . $this->query);
+            $result = $ssh->exec("sudo -S {$this->query}");
         }
 
-        Log::info("$this->node->host: " . $result . '.');
+        Log::info("{$this->node->host}: " . $result . '.');
     }
 }
