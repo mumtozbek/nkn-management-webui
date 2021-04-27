@@ -46,6 +46,8 @@ class SyncWallet extends Command
         $nodes = Node::select(['nodes.*', 'wallets.address'])->leftJoin('wallets', 'wallets.node_id', '=', 'nodes.id')->whereNull('wallets.address')->get();
 
         foreach($nodes as $node) {
+            echo "SYNC STARTED: $node->host.\n";
+
             $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
 
             $ssh = new SSH2($node->host);
