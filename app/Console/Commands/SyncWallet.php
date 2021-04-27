@@ -100,6 +100,8 @@ class SyncWallet extends Command
             } catch (Exception $exception) {
                 echo "{$node->host}: FAILED (" . $exception->getMessage() . ").\n";
             }
+
+            echo "{$node->host}: FINISHED.\n";
         }
 
         return 0;
