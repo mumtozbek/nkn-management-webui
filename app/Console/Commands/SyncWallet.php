@@ -49,31 +49,31 @@ class SyncWallet extends Command
             $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
 
             $ssh = new SSH2($node->host);
-            if (!$ssh->login($node->account->username, $key)) {
-                $this->fail(new Exception("$node->host: AUTH FAILED."));
-            }
+            if ($ssh->login($node->account->username, $key)) {
+                $keystore = json_decode($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json"));
+                $password = $ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd");
 
-            $keystore = json_decode($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json"));
-            $password = $ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd");
+                $wallet = Wallet::where('address', $keystore->Address)->first();
+                if ($wallet) {
+                    if ($wallet->node_id != $node->id) {
+                        echo $node->host . " has non-unique wallet.\n";
 
-            $wallet = Wallet::where('address', $keystore->Address)->first();
-            if ($wallet) {
-                if ($wallet->node_id != $node->id) {
-                    echo $node->host . " has non-unique wallet.\n";
+                        $wallet = $wallet->update([
+                            'node_id' => $node->id,
+                        ]);
+                    }
+                } else {
+                    echo "Wallet $keystore->Address attached to node with ip $node->host.\n";
 
-                    $wallet = $wallet->update([
+                    $wallet = Wallet::create([
                         'node_id' => $node->id,
+                        'address' => $keystore->Address,
+                        'keystore' => $keystore,
+                        'password' => $password,
                     ]);
                 }
             } else {
-                echo "Wallet $keystore->Address attached to node with ip $node->host.\n";
-
-                $wallet = Wallet::create([
-                    'node_id' => $node->id,
-                    'address' => $keystore->Address,
-                    'keystore' => $keystore,
-                    'password' => $password,
-                ]);
+                echo "$node->host: AUTH FAILED.\n";
             }
         }
 
