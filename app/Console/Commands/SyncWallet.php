@@ -43,7 +43,7 @@ class SyncWallet extends Command
      */
     public function handle()
     {
-        $nodes = Node::select(['nodes.*', 'wallets.address'])->leftJoin('wallets', 'wallets.node_id', '=', 'nodes.id')->whereNull('wallets.address')->get();
+        $nodes = Node::select(['nodes.*', 'wallets.address'])->leftJoin('wallets', 'wallets.node_id', '=', 'nodes.id')->whereNull('wallets.address')->where('host', '52.252.131.195')->get();
 
         foreach($nodes as $node) {
             echo "SYNC STARTED: $node->host.\n";
@@ -51,7 +51,7 @@ class SyncWallet extends Command
             $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
 
             $ssh = new SSH2($node->host);
-            $ssh->setTimeout(1);
+            $ssh->setTimeout(10);
 
             if ($ssh->login($node->account->username, $key)) {
                 $keystore = json_decode($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json"));
