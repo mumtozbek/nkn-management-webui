@@ -3,10 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\Wallet;
-use Complex\Exception;
 use App\Models\Node;
+use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Net\SSH2;
 
@@ -45,34 +44,34 @@ class SyncWallet extends Command
     {
         $nodes = Node::select(['nodes.*', 'wallets.address'])->leftJoin('wallets', 'wallets.node_id', '=', 'nodes.id')->whereNull('wallets.address')->get();
 
-        foreach($nodes as $node) {
+        foreach ($nodes as $node) {
             echo "SYNC STARTED: $node->host.\n";
 
-            $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
+            try {
+                $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
 
-            $ssh = new SSH2($node->host);
-            $ssh->setTimeout(10);
+                $ssh = new SSH2($node->host);
+                $ssh->setTimeout(15);
+                $ssh->login($node->account->username, $key);
 
-            if ($ssh->login($node->account->username, $key)) {
                 $keystore = json_decode($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json"));
                 $password = $ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd");
 
                 if (empty($keystore->Address)) {
-                    echo $node->host . ": could not fetch the wallet keystore.\n";
-                    continue;
+                    throw new Exception("Could not fetch the wallet keystore.");
                 }
 
                 $wallet = Wallet::where('address', $keystore->Address)->first();
                 if ($wallet) {
                     if ($wallet->node_id != $node->id) {
-                        echo $node->host . " has non-unique wallet.\n";
+                        echo "$node->host: DEATTACHED $keystore->Address.\n";
 
                         $wallet = $wallet->update([
                             'node_id' => $node->id,
                         ]);
                     }
                 } else {
-                    echo "Wallet $keystore->Address attached to node with ip $node->host.\n";
+                    echo "$node->host: ATTACHED $keystore->Address.\n";
 
                     $wallet = Wallet::create([
                         'node_id' => $node->id,
@@ -81,12 +80,12 @@ class SyncWallet extends Command
                         'password' => $password,
                     ]);
                 }
-            } else {
-                echo "$node->host: AUTH FAILED.\n";
-            }
 
-            if ($ssh->isConnected()) {
-                $ssh->disconnect();
+                if ($ssh->isConnected()) {
+                    $ssh->disconnect();
+                }
+            } catch (Exception $exception) {
+                echo "$node->host: FAILED (" . $exception->getMessage() . ").\n";
             }
         }
 
