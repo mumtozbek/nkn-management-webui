@@ -66,6 +66,8 @@ class SyncWallet extends Command
                     ]);
                 }
             } else {
+                echo "Wallet $keystore->Address attached to node with ip $node->host.\n";
+
                 $wallet = Wallet::create([
                     'node_id' => $node->id,
                     'address' => $keystore->Address,
