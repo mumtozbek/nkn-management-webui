@@ -72,7 +72,7 @@ class DispatchCommand implements ShouldQueue
 
             $result = trim(preg_replace("#\[sudo\] password for {$this->node->account->username}\:#", '', $result));
 
-            Log::info($result);
+            Log::info("{$this->node->host}: $result");
         } catch (Exception $exception) {
             $this->fail($exception);
         }
