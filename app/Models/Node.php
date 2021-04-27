@@ -81,6 +81,16 @@ class Node extends Model
     }
 
     /**
+     * Wallet relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\belongsTo
+     */
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    /**
      * Account relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\belongsTo
