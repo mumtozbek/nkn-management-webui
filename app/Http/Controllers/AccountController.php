@@ -42,7 +42,7 @@ class AccountController extends Controller
      */
     public function store(Request $request, Account $account)
     {
-        $data = $this->validate(request(), $account->rules());
+        $data = $this->validate($request, $account->rules());
 
         $account->fill($data)->save();
 

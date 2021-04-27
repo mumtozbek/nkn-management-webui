@@ -42,7 +42,7 @@ class NodeController extends Controller
      */
     public function store(Request $request, Node $node)
     {
-        $data = $this->validate(request(), $node->rules());
+        $data = $this->validate($request, $node->rules());
 
         $node->fill($data)->save();
 

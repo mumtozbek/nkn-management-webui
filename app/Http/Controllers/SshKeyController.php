@@ -38,7 +38,7 @@ class SshKeyController extends Controller
      */
     public function store(Request $request, SshKey $ssh_key)
     {
-        $data = $this->validate(request(), $ssh_key->rules());
+        $data = $this->validate($request, $ssh_key->rules());
 
         $ssh_key->fill($data)->save();
 

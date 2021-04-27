@@ -37,7 +37,7 @@ class ProviderController extends Controller
      */
     public function store(Request $request, Provider $provider)
     {
-        $data = $this->validate(request(), $provider->rules());
+        $data = $this->validate($request, $provider->rules());
 
         $provider->fill($data)->save();
 
