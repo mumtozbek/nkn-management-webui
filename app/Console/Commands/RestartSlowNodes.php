@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Node;
-use App\Models\Wallet;
+use Exception;
 use Illuminate\Console\Command;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Net\SSH2;
