@@ -20,7 +20,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.2/chart.min.js"></script>
 
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav id="header-nav" class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             @include('layouts.nav')
         </nav>
         <main class="py-4">
