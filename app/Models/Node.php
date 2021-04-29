@@ -50,12 +50,18 @@ class Node extends Model
         });
 
         self::updated(function ($model) {
-            if ($model->wallet && $model->isDirty('host')) {
-                ExecuteCommand::dispatch($model, [
-                    "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
-                    "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
-                    "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                ]);
+            if ($model->isDirty('host')) {
+                if ($model->wallet) {
+                    ExecuteCommand::dispatch($model, [
+                        "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
+                        "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
+                        "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
+                    ]);
+                }
+
+                $model->uptimes()->delete();
+                $model->blocks()->delete();
+                $model->proposals()->delete();
             }
         });
     }
