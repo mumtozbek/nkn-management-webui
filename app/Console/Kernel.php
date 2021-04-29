@@ -25,10 +25,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('sync:uptime')->everyTenMinutes();
-        $schedule->command('sync:monitor')->everyThirtyMinutes();
-        $schedule->command('sync:location')->everyThirtyMinutes();
-        $schedule->command('restart:slow')->everyThirtyMinutes();
+        $schedule->command('sync:uptime')->everyTenMinutes()->withoutOverlapping();
+        $schedule->command('sync:monitor')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('sync:location')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('restart:slow')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping();
     }
 
     /**
