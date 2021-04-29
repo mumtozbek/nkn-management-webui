@@ -15,7 +15,7 @@
 
                             <div class="form-group">
                                 <label for="node_id">{{ __('Node') }}</label>
-                                <select name="node_id" id="node_id" class="form-control" required>
+                                <select name="node_id" id="node_id" class="form-control">
                                     <option value="">{{ __('Select the Node') }}</option>
                                     @foreach($nodes as $node)
                                         <option value="{{ $node->id }}"{{ $node->id == old('node_id') ? ' selected' : '' }}>{{ $node->host }}</option>

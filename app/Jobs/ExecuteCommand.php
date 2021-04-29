@@ -71,9 +71,7 @@ class ExecuteCommand implements ShouldQueue
             }
 
             foreach ($commands as $command) {
-                $result = $ssh->exec($command, function($response) {
-                    Log::debug($response);
-                });
+                $result = $ssh->exec($command);
             }
 
             Log::channel('queue')->info("JOB {$this->job->getJobId()}, HOST {$this->node->host} returned: \"$result\"");

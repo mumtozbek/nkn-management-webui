@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\ExecuteCommand;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +22,31 @@ class Wallet extends Model
         'password',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        self::created(function ($model) {
+            if ($model->node) {
+                ExecuteCommand::dispatch($model->node, [
+                    "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
+                    "sudo echo '" . trim($model->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
+                    "sudo echo '" . trim($model->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
+                ]);
+            }
+        });
+
+        self::updated(function ($model) {
+            if ($model->node && $model->isDirty('node_id')) {
+                ExecuteCommand::dispatch($model->node, [
+                    "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
+                    "sudo echo '" . trim($model->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
+                    "sudo echo '" . trim($model->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
+                ]);
+            }
+        });
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -29,7 +55,7 @@ class Wallet extends Model
     public function rules()
     {
         return [
-            'node_id' => 'required|exists:nodes,id|unique:wallets,node_id,' . $this->id,
+            'node_id' => 'nullable|exists:nodes,id|unique:wallets,node_id,' . $this->id,
             'address' => 'required|string|min:36|max:36|unique:wallets,address,' . $this->id,
             'keystore' => 'required|string',
             'password' => 'required|string',

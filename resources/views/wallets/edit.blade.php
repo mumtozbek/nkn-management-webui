@@ -17,7 +17,7 @@
 
                             <div class="form-group">
                                 <label for="name">{{ __('Node') }}</label>
-                                <select name="node_id" id="node_id" class="form-control" required>
+                                <select name="node_id" id="node_id" class="form-control">
                                     <option value="">{{ __('Select the Node') }}</option>
                                     @foreach($nodes as $node)
                                         <option value="{{ $node->id }}"{{ $node->is($wallet->node) ? ' selected' : '' }}>{{ $node->host }}</option>
