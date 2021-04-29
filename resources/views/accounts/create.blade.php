@@ -34,11 +34,6 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="password">{{ __('Password') }}</label>
-                                <input type="text" name="password" id="password" value="{{ old('password') }}" class="form-control">
-                            </div>
-
-                            <div class="form-group">
                                 <label for="name">{{ __('SSH Key') }}</label>
                                 <select name="ssh_key_id" id="ssh_key_id" class="form-control" required>
                                     <option value="">{{ __('Select the SSH Key') }}</option>

@@ -15,7 +15,6 @@ class Account extends Model
     protected $fillable = [
         'name',
         'username',
-        'password',
         'ssh_key_id',
         'provider_id',
     ];
@@ -31,7 +30,6 @@ class Account extends Model
             'name' => 'required|string|min:3|max:50',
             'provider_id' => 'required|exists:providers,id',
             'username' => 'nullable|string',
-            'password' => 'nullable|string',
             'ssh_key_id' => 'nullable|exists:ssh_keys,id',
         ];
     }

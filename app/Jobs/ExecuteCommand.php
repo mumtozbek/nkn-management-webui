@@ -61,11 +61,7 @@ class ExecuteCommand implements ShouldQueue
                 throw new Exception("{$this->node->host}: AUTH FAILED.");
             }
 
-            if ($this->node->account->password) {
-                $result = $ssh->exec("echo '{$this->node->account->password}' | sudo -S {$this->query}");
-            } else {
-                $result = $ssh->exec("sudo {$this->query}");
-            }
+            $result = $ssh->exec("sudo {$this->query}");
 
             $result = trim(preg_replace("#\[sudo\] password for {$this->node->account->username}\:#", '', $result));
 
