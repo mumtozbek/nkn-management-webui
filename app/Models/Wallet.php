@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Jobs\ExecuteCommand;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 
 class Wallet extends Model
 {

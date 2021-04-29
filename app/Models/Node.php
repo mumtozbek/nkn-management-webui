@@ -49,23 +49,9 @@ class Node extends Model
             }
         });
 
-        self::updated(function ($model) {
+        self::updating(function ($model) {
             if ($model->isDirty('host')) {
-                if ($model->wallet) {
-                    ExecuteCommand::dispatch($model, [
-                        "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
-                        "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
-                        "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                        "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
-                        "sudo bash install.sh > /dev/null 2>&1 &",
-                    ]);
-                }
-
-                Uptime::where('node_id', $model->id)->delete();
-                Block::where('node_id', $model->id)->delete();
-                Proposal::where('node_id', $model->id)->delete();
-
-                $model->update([
+                $model->fill([
                     'country' => null,
                     'region' => null,
                     'city' => null,
@@ -75,6 +61,39 @@ class Node extends Model
                     'relays' => null,
                     'uptime' => null,
                 ]);
+            }
+        });
+
+        self::updated(function ($model) {
+            if ($model->isDirty('host')) {
+                Uptime::where('node_id', $model->id)->delete();
+                Block::where('node_id', $model->id)->delete();
+                Proposal::where('node_id', $model->id)->delete();
+
+                if ($model->wallet) {
+                    ExecuteCommand::dispatch($model, [
+                        "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
+                        "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
+                        "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
+                        "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
+                        "sudo bash install.sh > /dev/null 2>&1 &",
+                    ]);
+                } else {
+                    $wallet = Wallet::whereNull('node_id')->first();
+                    if ($wallet) {
+                        $wallet->update([
+                            'node_id' => $model->id,
+                        ]);
+
+                        ExecuteCommand::dispatch($model, [
+                            "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
+                            "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
+                            "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
+                            "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
+                            "sudo bash install.sh > /dev/null 2>&1 &",
+                        ]);
+                    }
+                }
             }
         });
     }
