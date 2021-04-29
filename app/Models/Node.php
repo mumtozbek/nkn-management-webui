@@ -59,19 +59,19 @@ class Node extends Model
                     ]);
                 }
 
-                $model->uptimes()->delete();
-                $model->blocks()->delete();
-                $model->proposals()->delete();
+                Uptime::where('node_id', $model->id)->delete();
+                Block::where('node_id', $model->id)->delete();
+                Proposal::where('node_id', $model->id)->delete();
 
                 $model->update([
-                    'country',
-                    'region',
-                    'city',
-                    'status',
-                    'version',
-                    'height',
-                    'relays',
-                    'uptime',
+                    'country' => null,
+                    'region' => null,
+                    'city' => null,
+                    'status' => null,
+                    'version' => null,
+                    'height' => null,
+                    'relays' => null,
+                    'uptime' => null,
                 ]);
             }
         });
