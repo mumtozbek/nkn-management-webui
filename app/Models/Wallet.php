@@ -32,6 +32,7 @@ class Wallet extends Model
                     "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                     "sudo echo '" . trim($model->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                     "sudo echo '" . trim($model->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
+                    "sudo systemctl restart nkn-commercial",
                 ]);
             }
         });
@@ -42,6 +43,7 @@ class Wallet extends Model
                     "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                     "sudo echo '" . trim($model->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                     "sudo echo '" . trim($model->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
+                    "sudo systemctl restart nkn-commercial",
                 ]);
             }
         });

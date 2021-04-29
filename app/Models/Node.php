@@ -56,6 +56,8 @@ class Node extends Model
                         "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                         "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                         "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
+                        "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
+                        "sudo bash install.sh > /dev/null 2>&1 &",
                     ]);
                 }
 
