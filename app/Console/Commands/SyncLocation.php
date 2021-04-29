@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Node;
 use App\UptimeRobot;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -44,13 +45,17 @@ class SyncLocation extends Command
         $nodes = Node::whereNull('country')->orWhereNull('region')->orWhereNull('city')->get();
 
         $nodes->each(function ($node) {
-            $response = Http::get('http://api.ipstack.com/' . $node->host . '?access_key=' . env('IPSTACK_ACCESS_KEY') . '&format=1');
+            try {
+                $response = Http::get('http://api.ipstack.com/' . $node->host . '?access_key=' . env('IPSTACK_ACCESS_KEY') . '&format=1');
 
-            $node->update([
-                'country' => $response['country_name'],
-                'region' => $response['region_name'],
-                'city' => $response['city'],
-            ]);
+                $node->update([
+                    'country' => $response['country_name'],
+                    'region' => $response['region_name'],
+                    'city' => $response['city'],
+                ]);
+            } catch (Exception $exception) {
+                Log::error($exception->getMessage());
+            }
         });
     }
 }

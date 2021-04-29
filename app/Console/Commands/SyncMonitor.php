@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\Models\Node;
 use App\UptimeRobot;
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class SyncMonitor extends Command
 {
@@ -46,25 +48,42 @@ class SyncMonitor extends Command
 
     public function syncWithUptimeRobot($api, $nodes)
     {
-        $alert_contacts = collect($api->getAlertContacts())->map(function ($item) {
-            return ['id' => $item['id'] . '_0_0'];
-        })->pluck('id')->implode('-');
-
         $hosts = $nodes->pluck('host')->toArray();
-        $monitors = collect($api->getMonitors());
+
+        try {
+            $alert_contacts = collect($api->getAlertContacts())->map(function ($item) {
+                return ['id' => $item['id'] . '_0_0'];
+            })->pluck('id')->implode('-');
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage());
+        }
+
+        try {
+            $monitors = collect($api->getMonitors());
+        } catch (Exception $exception) {
+            Log::error($exception->getMessage());
+        }
 
         $monitorsToDelete = $monitors->filter(function ($item) use ($hosts) {
             return !in_array($item['url'], $hosts);
         });
 
         foreach ($monitorsToDelete as $monitor) {
-            $api->deleteMonitor($monitor['id']);
+            try {
+                $api->deleteMonitor($monitor['id']);
+            } catch (Exception $exception) {
+                Log::error($exception->getMessage());
+            }
         }
 
         $monitorsToCreate = $nodes->pluck('host')->diff($monitors->pluck('url'));
 
         foreach ($monitorsToCreate as $host) {
-            $api->createMonitor($host, $alert_contacts);
+            try {
+                $api->createMonitor($host, $alert_contacts);
+            } catch (Exception $exception) {
+                Log::error($exception->getMessage());
+            }
         }
     }
 }

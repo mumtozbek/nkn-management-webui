@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Node;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -43,51 +44,55 @@ class SyncUptime extends Command
 
         // Check all nodes' states
         $nodes->each(function ($node) {
-            $response = $this->getNodeState($node->host);
-            if (is_string($response)) {
-                $json = json_decode($response);
+            try {
+                $response = $this->getNodeState($node->host);
+                if (is_string($response)) {
+                    $json = json_decode($response);
 
-                if (!empty($json)) {
-                    if (!empty($json->result)) {
-                        $node->index($json);
+                    if (!empty($json)) {
+                        if (!empty($json->result)) {
+                            $node->index($json);
 
-                        return true;
-                    } elseif (!empty($json->error)) {
-                        if ($json->error->code == '-45022') {
-                            $status = 'GENERATE_ID';
-                        } elseif ($json->error->code == '-45024') {
-                            $status = 'PRUNING_DB';
-                        } else {
-                            Log::channel('daily')->alert("Node {$node->host} returned error:" . json_encode($json->error));
+                            return true;
+                        } elseif (!empty($json->error)) {
+                            if ($json->error->code == '-45022') {
+                                $status = 'GENERATE_ID';
+                            } elseif ($json->error->code == '-45024') {
+                                $status = 'PRUNING_DB';
+                            } else {
+                                Log::channel('daily')->alert("Node {$node->host} returned error:" . json_encode($json->error));
+
+                                return true;
+                            }
+
+                            $node->update([
+                                'status' => $status,
+                            ]);
+
+                            if ($status == $json->error->code) {
+                                $node->uptimes()->create([
+                                    'speed' => 0,
+                                ]);
+                            }
 
                             return true;
                         }
-
-                        $node->update([
-                            'status' => $status,
-                        ]);
-
-                        if ($status == $json->error->code) {
-                            $node->uptimes()->create([
-                                'speed' => 0,
-                            ]);
-                        }
-
-                        return true;
                     }
                 }
+
+                if ($node->status != 'OFFLINE') {
+                    Log::channel('daily')->alert("Node {$node->host} is down!");
+
+                    mail(env('MAIL_ADMIN'), "Node {$node->host} is down!", "Node {$node->host} is down!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+                }
+
+                // Connection failed, so log it
+                $node->update([
+                    'status' => 'OFFLINE',
+                ]);
+            } catch (Exception $exception) {
+                Log::error($exception->getMessage());
             }
-
-            if ($node->status != 'OFFLINE') {
-                Log::channel('daily')->alert("Node {$node->host} is down!");
-
-                mail(env('MAIL_ADMIN'), "Node {$node->host} is down!", "Node {$node->host} is down!", '', '-f' . env('MAIL_FROM_ADDRESS'));
-            }
-
-            // Connection failed, so log it
-            $node->update([
-                'status' => 'OFFLINE',
-            ]);
         });
     }
 

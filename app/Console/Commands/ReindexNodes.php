@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\Node;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ReindexNodes extends Command
 {
@@ -46,31 +48,33 @@ class ReindexNodes extends Command
         $nodes = Node::all();
 
         $nodes->each(function($node) {
-            $nodeState = [
-                'status' => $node->status,
-                'version' => $node->version,
-                'height' => $node->height,
-                'relays' => $node->relays,
-                'uptime' => $node->uptime,
-            ];
+            try {
+                $nodeState = [
+                    'status' => $node->status,
+                    'version' => $node->version,
+                    'height' => $node->height,
+                    'relays' => $node->relays,
+                    'uptime' => $node->uptime,
+                ];
 
-            Cache::forget('nodes.mined.' . $node->id);
+                Cache::forget('nodes.mined.' . $node->id);
 
-            $node->update([
-                'status' => 'WAIT_FOR_SYNCING',
-                'version' => '',
-                'height' => 0,
-                'relays' => 0,
-                'uptime' => 0,
-            ]);
+                $node->update([
+                    'status' => 'WAIT_FOR_SYNCING',
+                    'version' => '',
+                    'height' => 0,
+                    'relays' => 0,
+                    'uptime' => 0,
+                ]);
 
-            $node->uptimes->sortBy('created_at')->each(function($uptime) use ($node) {
-                $node->reindex($uptime->response, $uptime->created_at);
-            });
+                $node->uptimes->sortBy('created_at')->each(function($uptime) use ($node) {
+                    $node->reindex($uptime->response, $uptime->created_at);
+                });
 
-            $node->update($nodeState);
+                $node->update($nodeState);
+            } catch (Exception $exception) {
+                Log::error($exception->getMessage());
+            }
         });
-
-        return 0;
     }
 }
