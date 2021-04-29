@@ -38,7 +38,6 @@ return [
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'default',
-            'expire' => 86400,
             'retry_after' => 90,
             'after_commit' => false,
         ],
