@@ -62,6 +62,17 @@ class Node extends Model
                 $model->uptimes()->delete();
                 $model->blocks()->delete();
                 $model->proposals()->delete();
+
+                $model->update([
+                    'country',
+                    'region',
+                    'city',
+                    'status',
+                    'version',
+                    'height',
+                    'relays',
+                    'uptime',
+                ]);
             }
         });
     }
