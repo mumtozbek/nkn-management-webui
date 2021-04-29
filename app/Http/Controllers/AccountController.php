@@ -58,7 +58,10 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
-        return view('accounts.show', compact('account'));
+        $providers = Provider::orderBy('name', 'ASC')->get();
+        $ssh_keys = SshKey::all();
+
+        return view('accounts.show', compact('account', 'providers', 'ssh_keys'));
     }
 
     /**
