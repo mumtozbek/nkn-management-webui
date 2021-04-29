@@ -100,6 +100,11 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'queue' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/queue.log'),
+        ],
     ],
 
 ];

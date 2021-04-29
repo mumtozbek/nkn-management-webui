@@ -29,24 +29,21 @@ class ExecuteCommand implements ShouldQueue
     public $tries = 3;
 
     /**
+     * The number of seconds to wait before retrying the job.
+     *
+     * @var array
+     */
+    public $backoff = [3, 6, 10];
+
+    /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Node $node, $query)
+    public function __construct(Node $node, string $query)
     {
         $this->node = $node;
         $this->query = $query;
-    }
-
-    /**
-     * Calculate the number of seconds to wait before retrying the job.
-     *
-     * @return array
-     */
-    public function backoff()
-    {
-        return [3, 6, 10];
     }
 
     /**
@@ -72,8 +69,10 @@ class ExecuteCommand implements ShouldQueue
 
             $result = trim(preg_replace("#\[sudo\] password for {$this->node->account->username}\:#", '', $result));
 
-            Log::info("{$this->node->host}: $result");
+            Log::channel('queue')->info("JOB {$this->job->getJobId()}, HOST {$this->node->host} returned: \"$result\"");
         } catch (Exception $exception) {
+            Log::channel('queue')->warning($exception->getMessage());
+
             $this->fail($exception);
         }
     }
