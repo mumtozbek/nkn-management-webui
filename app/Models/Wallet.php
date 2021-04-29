@@ -38,7 +38,7 @@ class Wallet extends Model
         });
 
         self::updated(function ($model) {
-            if ($model->node && $model->isDirty('node_id')) {
+            if ($model->node && ($model->isDirty('node_id') || $model->isDirty('address'))) {
                 ExecuteCommand::dispatch($model->node, [
                     "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                     "sudo echo '" . trim($model->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
