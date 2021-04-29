@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\DispatchCommand;
+use App\Jobs\ExecuteCommand;
 use App\Models\Node;
 use Illuminate\Console\Command;
 
@@ -44,7 +44,7 @@ class Console extends Command
         $nodes = Node::all();
         foreach ($nodes as $node) {
             if (!empty($node->account->username) && !empty($node->account->sshKey)) {
-                DispatchCommand::dispatch($node, $query);
+                ExecuteCommand::dispatch($node, $query);
             }
         }
 

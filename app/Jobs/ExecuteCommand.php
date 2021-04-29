@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
 
-class DispatchCommand implements ShouldQueue
+class ExecuteCommand implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
