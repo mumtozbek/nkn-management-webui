@@ -41,7 +41,7 @@ class RestartSlowNodes extends Command
      */
     public function handle()
     {
-        $nodes = Node::where('uptime', '>', env('MIN_UPTIME'))->where('status', '!=', 'OFFLINE')->whereRaw('(SELECT speed FROM uptimes WHERE uptimes.node_id = nodes.id ORDER BY uptimes.created_at DESC LIMIT 1) < ' . env('MIN_SPEED'))->get();
+        $nodes = Node::where('uptime', '>', env('MIN_UPTIME'))->where('status', '!=', 'OFFLINE')->where('status', 'IS NOT NULL')->whereRaw('(SELECT speed FROM uptimes WHERE uptimes.node_id = nodes.id ORDER BY uptimes.created_at DESC LIMIT 1) < ' . env('MIN_SPEED'))->get();
 
         foreach ($nodes as $node) {
             if (empty($node->account->sshKey->private_key)) {
