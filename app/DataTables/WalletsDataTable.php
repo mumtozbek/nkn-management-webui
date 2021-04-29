@@ -45,7 +45,7 @@ class WalletsDataTable extends DataTable
     public function query(Wallet $model)
     {
         return $model
-            ->join('nodes', 'node_id', '=', 'nodes.id')
+            ->leftJoin('nodes', 'node_id', '=', 'nodes.id')
             ->select(['wallets.*', 'nodes.host AS node']);
     }
 

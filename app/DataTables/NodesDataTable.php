@@ -75,8 +75,8 @@ class NodesDataTable extends DataTable
     public function query(Node $model)
     {
         return $model
-            ->join('accounts', 'account_id', '=', 'accounts.id')
-            ->join('providers', 'accounts.provider_id', '=', 'providers.id')
+            ->leftJoin('accounts', 'account_id', '=', 'accounts.id')
+            ->leftJoin('providers', 'accounts.provider_id', '=', 'providers.id')
             ->select(['nodes.*'])
             ->selectRaw('ROUND(nodes.uptime / 3600, 2) AS hours')
             ->selectRaw('CONCAT(providers.name, " (", accounts.name, ")") AS account')

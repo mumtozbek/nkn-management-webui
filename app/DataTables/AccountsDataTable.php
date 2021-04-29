@@ -43,7 +43,7 @@ class AccountsDataTable extends DataTable
     public function query(Account $model)
     {
         return $model
-            ->join('providers', 'provider_id', '=', 'providers.id')
+            ->leftJoin('providers', 'provider_id', '=', 'providers.id')
             ->select(['accounts.*', 'providers.name AS provider']);
     }
 
