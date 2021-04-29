@@ -6,6 +6,7 @@ use App\Models\Wallet;
 use App\Models\Node;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Net\SSH2;
 
@@ -42,8 +43,11 @@ class SyncWallet extends Command
      */
     public function handle()
     {
-        $nodes = Node::all();
+        DB::table('wallets')->update([
+            'node_id' => null,
+        ]);
 
+        $nodes = Node::all();
         foreach ($nodes as $node) {
             if (empty($node->account->sshKey->private_key)) {
                 echo "{$node->host}: SKIPPED\n";
