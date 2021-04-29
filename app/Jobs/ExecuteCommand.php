@@ -40,7 +40,7 @@ class ExecuteCommand implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Node $node, string $query)
+    public function __construct(Node $node, $query)
     {
         $this->node = $node;
         $this->query = $query;
@@ -61,9 +61,20 @@ class ExecuteCommand implements ShouldQueue
                 throw new Exception("{$this->node->host}: AUTH FAILED.");
             }
 
-            $result = $ssh->exec("sudo {$this->query}");
+            $commands = [];
+            if (is_string($this->query)) {
+                $commands[] = $this->query;
+            } elseif (is_array($this->query)) {
+                foreach ($this->query as $command) {
+                    $commands[] = $command;
+                }
+            }
 
-            $result = trim(preg_replace("#\[sudo\] password for {$this->node->account->username}\:#", '', $result));
+            foreach ($commands as $command) {
+                $result = $ssh->exec($command, function($response) {
+                    Log::debug($response);
+                });
+            }
 
             Log::channel('queue')->info("JOB {$this->job->getJobId()}, HOST {$this->node->host} returned: \"$result\"");
         } catch (Exception $exception) {
