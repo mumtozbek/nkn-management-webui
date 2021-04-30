@@ -34,6 +34,11 @@ class Block extends Model
 
         foreach ($nodes as $node_id => $records) {
             $node = Node::find($node_id);
+
+            if (is_null($node)) {
+                continue;
+            }
+
             $color = Cache::get('nodes.colors.' . $node_id);
 
             if (is_null($color)) {
