@@ -41,7 +41,7 @@ class RebootNodes extends Command
      */
     public function handle()
     {
-        $nodes = Node::where('uptime', '>=', 86400)->where('status', '!=', 'OFFLINE')->whereNotNull('status')->get();
+        $nodes = Node::where('uptime', '>=', 86400)->where('status', 'PERSIST_FINISHED')->whereNotNull('status')->get();
 
         foreach ($nodes as $node) {
             if (empty($node->account->sshKey->private_key)) {
