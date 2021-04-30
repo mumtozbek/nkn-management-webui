@@ -26,16 +26,16 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Sync node information.
-        $schedule->command('sync:uptime')->everyTenMinutes()->withoutOverlapping();
-        $schedule->command('sync:monitor')->everyThirtyMinutes()->withoutOverlapping();
-        $schedule->command('sync:location')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('sync:uptime')->everyTenMinutes()->withoutOverlapping(3600);
+        $schedule->command('sync:monitor')->everyThirtyMinutes()->withoutOverlapping(3600);
+        $schedule->command('sync:location')->everyMinute()->withoutOverlapping(3600);
 
         // Run scheduled jobs.
-        $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping();
+        $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping(3600);
 
         // Need to run restart and reboot commands after all jobs.
-        $schedule->command('restart:slow')->everyThirtyMinutes()->withoutOverlapping();
-        $schedule->command('restart:reboot')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('restart:slow')->everyMinute()->withoutOverlapping(3600);
+        $schedule->command('restart:reboot')->everyMinute()->withoutOverlapping(3600);
     }
 
     /**
