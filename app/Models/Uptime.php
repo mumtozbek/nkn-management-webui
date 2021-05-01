@@ -30,7 +30,7 @@ class Uptime extends Model
     {
         $data = [];
 
-        $query = DB::table('uptimes')->selectRaw('node_id, ROUND(AVG(speed), 2) AS speed, DATE_FORMAT(created_at, "%Y-%m-%d %H:00:00") AS time')->groupByRaw('HOUR(created_at), DAY(created_at), node_id')->orderByRaw('DAY(created_at) ASC, HOUR(created_at) ASC, AVG(speed) DESC');
+        $query = DB::table('uptimes')->selectRaw('node_id, ROUND(AVG(speed), 2) AS speed, DATE_FORMAT(created_at, "%Y-%m-%d %H:00:00") AS time')->groupByRaw('HOUR(created_at), DAY(created_at), node_id')->orderByRaw('created_at ASC, AVG(speed) DESC');
 
         if (!empty($id)) {
             $query->where('node_id', $id);
