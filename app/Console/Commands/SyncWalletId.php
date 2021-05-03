@@ -51,7 +51,7 @@ class SyncWalletId extends Command
                 $response = Http::get("https://openapi.nkn.org/api/v1/addresses/{$wallet->address}/transactions");
 
                 foreach ($response['data'] as $operation) {
-                    if ($operation['txType'] == 'GENERATE_ID_TYPE' && $operation['fee'] == env('GENERATE_ID_FEE')) {
+                    if ($operation['txType'] == 'GENERATE_ID_TYPE' && $operation['block_id'] >= env('GENERATE_ID_START')) {
                         $wallet->update([
                             'generated_at' => $operation['created_at'],
                         ]);

@@ -21,6 +21,7 @@ class Wallet extends Model
         'address',
         'keystore',
         'password',
+        'generated_at',
     ];
 
     public static function boot()
