@@ -56,7 +56,7 @@ class SyncWalletId extends Command
                             'generated_at' => $operation['created_at'],
                         ]);
 
-                        break 2;
+                        continue 2;
                     }
                 }
 
