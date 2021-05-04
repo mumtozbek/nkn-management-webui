@@ -93,6 +93,11 @@ class Node extends Model
                             "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
                             "sudo bash install.sh > /dev/null 2>&1 &",
                         ]);
+                    } else {
+                        ExecuteCommand::dispatch($model, [
+                            "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
+                            "sudo bash install.sh > /dev/null 2>&1 &",
+                        ]);
                     }
                 }
             }
