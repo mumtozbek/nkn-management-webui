@@ -34,7 +34,7 @@ class Node extends Model
         parent::boot();
 
         self::created(function ($model) {
-            $wallet = Wallet::whereNull('node_id')->orderBy('generate_at', 'DESC')->first();
+            $wallet = Wallet::whereNull('node_id')->orderBy('generated_at', 'DESC')->first();
             if ($wallet) {
                 $wallet->update([
                     'node_id' => $model->id,
@@ -85,7 +85,7 @@ class Node extends Model
                         "sudo bash install.sh > /dev/null 2>&1 &",
                     ]);
                 } else {
-                    $wallet = Wallet::whereNull('node_id')->orderBy('generate_at', 'DESC')->first();
+                    $wallet = Wallet::whereNull('node_id')->orderBy('generated_at', 'DESC')->first();
                     if ($wallet) {
                         $wallet->update([
                             'node_id' => $model->id,
