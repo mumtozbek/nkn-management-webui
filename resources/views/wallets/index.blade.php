@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <h2 class="mb-4">
-                    {{ __('Managing Accounts') }}
+                    {{ __('Managing Wallets') }}
                 </h2>
 
                 @if(session()->has('flash'))
