@@ -30,6 +30,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('sync:monitor')->everyThirtyMinutes()->withoutOverlapping(3600);
         $schedule->command('sync:location')->everyMinute()->withoutOverlapping(3600);
 
+        // Check wallet id every 30 minutes.
+        $schedule->command('wallets:id')->everyThirtyMinutes()->withoutOverlapping(3600);
+
         // Run scheduled jobs.
         $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping(3600);
 
