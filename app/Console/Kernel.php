@@ -34,6 +34,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('wallets:id')->everyThirtyMinutes()->withoutOverlapping(3600);
 
         // Run scheduled jobs.
+        $schedule->command('queue:retry all')->everyMinute()->withoutOverlapping(3600);
         $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping(3600);
 
         // Need to run restart and reboot commands after all jobs.
