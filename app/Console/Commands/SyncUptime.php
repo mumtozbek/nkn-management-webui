@@ -80,16 +80,25 @@ class SyncUptime extends Command
                     }
                 }
 
-                if ($node->status != 'OFFLINE') {
-                    Log::channel('daily')->alert("Node {$node->host} is down!");
+                if ($node->uptimes()->count() > 0) {
+                    if ($node->status != 'OFFLINE') {
+                        Log::channel('daily')->alert("Node {$node->host} is down!");
 
-                    mail(env('MAIL_ADMIN'), "Node {$node->host} is down!", "Node {$node->host} is down!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+                        mail(env('MAIL_ADMIN'), "Node {$node->host} is down!", "Node {$node->host} is down!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+                    }
+
+                    // Log uptime state
+                    $node->uptimes()->create([
+                        'speed' => 0,
+                        'status' => 'OFFLINE',
+                    ]);
+
+                    // Connection failed, so log it
+                    $node->update([
+                        'uptime' => 0,
+                        'status' => 'OFFLINE',
+                    ]);
                 }
-
-                // Connection failed, so log it
-                $node->update([
-                    'status' => 'OFFLINE',
-                ]);
             } catch (Exception $exception) {
                 Log::error($exception->getMessage());
             }
