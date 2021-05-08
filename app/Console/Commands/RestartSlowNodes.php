@@ -54,7 +54,7 @@ class RestartSlowNodes extends Command
                     $ssh->setTimeout(5);
                     $ssh->login($node->account->username, $key);
 
-                    $ssh->exec("sudo systemctl restart nkn-commercial");
+                    $ssh->exec("sudo reboot");
 
                     echo "{$node->host}: RESTARTED\n";
                 } catch (Exception $exception) {
