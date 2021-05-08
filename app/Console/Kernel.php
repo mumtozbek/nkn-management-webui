@@ -38,7 +38,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping(3600);
 
         // Need to run restart and reboot commands after all jobs.
-        $schedule->command('restart:slow')->everyMinute()->withoutOverlapping(3600);
+        $schedule->command('restart:slow')->everyTenMinutes()->withoutOverlapping(3600);
         $schedule->command('restart:reboot')->everyMinute()->withoutOverlapping(3600);
     }
 
