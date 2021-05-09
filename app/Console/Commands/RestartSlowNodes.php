@@ -57,7 +57,9 @@ class RestartSlowNodes extends Command
                     $ssh->exec("sudo systemctl stop nkn");
                     $ssh->exec("sudo systemctl start nkn | sudo at now + " . env('RESTART_AFTER') . " minutes");
 
-                    echo "{$node->host}: RESTARTED\n";
+                    $node->update([
+                        'status' => 'OFFLINE',
+                    ]);
                 } catch (Exception $exception) {
                     echo "{$node->host}: FAILED (" . $exception->getMessage() . ")\n";
                 }
