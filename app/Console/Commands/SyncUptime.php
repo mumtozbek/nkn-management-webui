@@ -89,7 +89,6 @@ class SyncUptime extends Command
 
                     // Log uptime state
                     $node->uptimes()->create([
-                        'speed' => 0,
                         'status' => 'OFFLINE',
                     ]);
 
