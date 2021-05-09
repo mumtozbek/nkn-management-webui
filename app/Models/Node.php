@@ -108,7 +108,7 @@ class Node extends Model
             }
         });
 
-        self::deleted(function($model) {
+        self::deleted(function ($model) {
             $model->wallet->update([
                 'node_id' => null,
             ]);
@@ -217,7 +217,7 @@ class Node extends Model
         ]);
 
         $this->uptimes()->create([
-            'speed' => (($json->result->relayMessageCount / $json->result->uptime) * 3600),
+            'speed' => $json->result->uptime > 0 ? (($json->result->relayMessageCount / $json->result->uptime) * 3600) : 0,
             'response' => $json,
         ]);
 
