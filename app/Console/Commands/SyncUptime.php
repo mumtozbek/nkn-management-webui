@@ -80,7 +80,7 @@ class SyncUptime extends Command
                     }
                 }
 
-                if ($node->uptimes()->count() > 0) {
+                if ($node->status != null) {
                     if ($node->status != 'OFFLINE') {
                         Log::channel('daily')->alert("Node {$node->host} is down!");
 
