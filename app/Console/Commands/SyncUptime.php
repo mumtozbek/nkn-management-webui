@@ -69,12 +69,6 @@ class SyncUptime extends Command
                                 'status' => $status,
                             ]);
 
-                            if ($status == $json->error->code) {
-                                $node->uptimes()->create([
-                                    'speed' => 0,
-                                ]);
-                            }
-
                             return true;
                         }
                     }
