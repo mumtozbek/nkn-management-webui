@@ -81,11 +81,6 @@ class SyncUptime extends Command
                         mail(env('MAIL_ADMIN'), "Node {$node->host} is down!", "Node {$node->host} is down!", '', '-f' . env('MAIL_FROM_ADDRESS'));
                     }
 
-                    // Log uptime state
-                    $node->uptimes()->create([
-                        'status' => 'OFFLINE',
-                    ]);
-
                     // Connection failed, so log it
                     $node->update([
                         'uptime' => 0,
