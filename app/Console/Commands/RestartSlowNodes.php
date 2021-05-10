@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ExecuteCommand;
 use App\Models\Node;
 use Exception;
 use Illuminate\Console\Command;
@@ -55,11 +56,14 @@ class RestartSlowNodes extends Command
                     $ssh->login($node->account->username, $key);
 
                     $ssh->exec("sudo systemctl stop nkn");
-                    $ssh->exec("sudo systemctl start nkn | sudo at now + " . env('RESTART_AFTER') . " minutes");
 
                     $node->update([
                         'status' => 'OFFLINE',
                     ]);
+
+                    ExecuteCommand::dispatch($node, [
+                        "sudo systemctl start nkn",
+                    ])->delay(now()->addMinutes(env('RESTART_AFTER', 30)));
                 } catch (Exception $exception) {
                     echo "{$node->host}: FAILED (" . $exception->getMessage() . ")\n";
                 }
