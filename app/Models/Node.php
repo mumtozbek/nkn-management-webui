@@ -225,9 +225,11 @@ class Node extends Model
             'count' => ($this->blocks()->count() > 0 ? $count : 0),
         ]);
 
-        $this->proposals()->create([
-            'count' => $mined,
-        ]);
+        if ($mined > 0) {
+            $this->proposals()->create([
+                'count' => $mined,
+            ]);
+        }
 
         if ($mined) {
             mail(env('MAIL_ADMIN'), "Node {$this->host} has just mined!", "Node {$this->host} has just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
