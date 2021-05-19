@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\SyncUptime::class,
-        Commands\SyncMonitor::class,
+        Commands\SyncLocation::class,
     ];
 
     /**
@@ -27,18 +27,13 @@ class Kernel extends ConsoleKernel
     {
         // Sync node information.
         $schedule->command('sync:uptime')->everyTenMinutes()->withoutOverlapping(3600);
-        $schedule->command('sync:monitor')->everyThirtyMinutes()->withoutOverlapping(3600);
         $schedule->command('sync:location')->everyMinute()->withoutOverlapping(3600);
 
         // Check wallet id every 30 minutes.
-        $schedule->command('wallets:id')->everyThirtyMinutes()->withoutOverlapping(3600);
+        $schedule->command('wallets:id')->everyThreeHours()->withoutOverlapping(3600);
 
         // Run scheduled jobs.
         $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping(3600);
-
-        // Need to run restart and reboot commands after all jobs.
-        $schedule->command('restart:slow')->everyMinute()->withoutOverlapping(3600);
-        $schedule->command('restart:reboot')->everyMinute()->withoutOverlapping(3600);
     }
 
     /**
