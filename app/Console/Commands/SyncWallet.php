@@ -100,6 +100,10 @@ class SyncWallet extends Command
                 } catch (Exception $exception) {
                     echo "{$node->host}: FAILED (" . $exception->getMessage() . ")\n";
                 }
+
+                if (!is_null($ssh) && $ssh->isConnected()) {
+                    $ssh->disconnect();
+                }
             }
         }
     }

@@ -80,5 +80,9 @@ class ExecuteCommand implements ShouldQueue
 
             $this->fail($exception);
         }
+
+        if (!is_null($ssh) && $ssh->isConnected()) {
+            $ssh->disconnect();
+        }
     }
 }
