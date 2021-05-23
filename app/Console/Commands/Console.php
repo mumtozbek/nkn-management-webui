@@ -43,9 +43,7 @@ class Console extends Command
 
         $nodes = Node::all();
         foreach ($nodes as $node) {
-            if (!empty($node->account->username) && !empty($node->account->sshKey)) {
-                ExecuteCommand::dispatch($node, $query);
-            }
+            ExecuteCommand::dispatch($node, $query);
         }
 
         return 0;
