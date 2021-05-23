@@ -237,43 +237,4 @@ class Node extends Model
 
         Cache::forever('nodes.mined.' . $this->id, $json->result->proposalSubmitted);
     }
-
-    public function reindex($json, $date)
-    {
-        if (empty($json->result)) {
-            return false;
-        }
-
-        $count = (int)$json->result->height - (int)$this->height;
-
-        if (Cache::has('nodes.mined.' . $this->id) && $json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id, 0)) {
-            $mined = $json->result->proposalSubmitted - Cache::get('nodes.mined.' . $this->id, 0);
-        } else {
-            $mined = 0;
-        }
-
-        $this->update([
-            'status' => $json->result->syncState,
-            'version' => $json->result->version,
-            'height' => $json->result->height,
-            'relays' => $json->result->relayMessageCount,
-            'uptime' => $json->result->uptime,
-        ]);
-
-        $this->blocks()->create([
-            'count' => ($this->blocks()->count() > 0 ? $count : 0),
-            'created_at' => $date,
-        ]);
-
-        $this->proposals()->create([
-            'count' => $mined,
-            'created_at' => $date,
-        ]);
-
-        if ($mined) {
-            Log::debug("Node {$this->host} has just mined!");
-        }
-
-        Cache::set('nodes.mined.' . $this->id, $json->result->proposalSubmitted);
-    }
 }
