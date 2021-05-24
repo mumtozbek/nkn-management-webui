@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Jobs\ExecuteCommand;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -208,6 +209,12 @@ class Node extends Model
             $mined = 0;
         }
 
+        if ($json->result->uptime <= $this->uptime) {
+            $restartedAt = Carbon::now()->subSeconds($json->result->uptime);
+        } else {
+            $restartedAt = null;
+        }
+
         $this->update([
             'status' => $json->result->syncState,
             'version' => $json->result->version,
@@ -233,6 +240,10 @@ class Node extends Model
 
         if ($mined) {
             mail(env('MAIL_ADMIN'), "Node {$this->host} has just mined!", "Node {$this->host} has just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+        }
+
+        if ($restartedAt) {
+            mail(env('MAIL_ADMIN'), "Node {$this->host} restarted!", "Node {$this->host} restarted at {$restartedAt}!", '', '-f' . env('MAIL_FROM_ADDRESS'));
         }
 
         Cache::forever('nodes.mined.' . $this->id, $json->result->proposalSubmitted);
