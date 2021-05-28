@@ -92,10 +92,6 @@ class SyncWallet extends Command
                         ]);
                     }
 
-                    if ($ssh->isConnected()) {
-                        $ssh->disconnect();
-                    }
-
                     echo "{$node->host}: ATTACHED {$keystore->Address}\n";
                 } catch (Exception $exception) {
                     echo "{$node->host}: FAILED (" . $exception->getMessage() . ")\n";
