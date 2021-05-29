@@ -172,7 +172,7 @@ class Node extends Model
     /**
      * Wallet relation.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\belongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\hasOne
      */
     public function wallet()
     {
