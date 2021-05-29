@@ -203,6 +203,8 @@ class Node extends Model
     {
         $count = (int)$json->result->height - (int)$this->height;
 
+        $speed = $json->result->uptime > 0 ? (($json->result->relayMessageCount / $json->result->uptime) * 3600) : 0;
+
         if (Cache::has('nodes.mined.' . $this->id) && $json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id, 0)) {
             $mined = $json->result->proposalSubmitted - Cache::get('nodes.mined.' . $this->id, 0);
         } else {
@@ -224,7 +226,7 @@ class Node extends Model
         ]);
 
         $this->uptimes()->create([
-            'speed' => $json->result->uptime > 0 ? (($json->result->relayMessageCount / $json->result->uptime) * 3600) : 0,
+            'speed' => $speed,
             'response' => $json,
         ]);
 
@@ -239,7 +241,7 @@ class Node extends Model
         }
 
         if ($mined) {
-            mail(env('MAIL_ADMIN'), "Node {$this->host} has just mined!", "Node {$this->host} has just mined!", '', '-f' . env('MAIL_FROM_ADDRESS'));
+            mail(env('MAIL_ADMIN'), "Node {$this->host} has just mined!", "Node {$this->host} has mined at speed {$speed} r/h!", '', '-f' . env('MAIL_FROM_ADDRESS'));
         }
 
         if ($restartedAt) {
