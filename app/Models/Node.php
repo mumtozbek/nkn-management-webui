@@ -203,7 +203,7 @@ class Node extends Model
     {
         $count = (int)$json->result->height - (int)$this->height;
 
-        $speed = $json->result->uptime > 0 ? (($json->result->relayMessageCount / $json->result->uptime) * 3600) : 0;
+        $speed = $json->result->uptime > 0 ? round(($json->result->relayMessageCount / $json->result->uptime) * 3600, 2) : 0;
 
         if (Cache::has('nodes.mined.' . $this->id) && $json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id, 0)) {
             $mined = $json->result->proposalSubmitted - Cache::get('nodes.mined.' . $this->id, 0);
