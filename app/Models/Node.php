@@ -211,7 +211,7 @@ class Node extends Model
             $mined = 0;
         }
 
-        if ($json->result->uptime <= $this->uptime) {
+        if ($this->uptimes()->where('STATUS', 'PERSIST_FINISHED')->count() > 0 && $json->result->uptime <= $this->uptime) {
             $restartedAt = Carbon::now()->subSeconds($json->result->uptime);
         } else {
             $restartedAt = null;
