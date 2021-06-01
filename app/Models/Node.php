@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Jobs\ExecuteCommand;
+use App\Jobs\Dispatcher;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,7 +41,7 @@ class Node extends Model
                     'node_id' => $model->id,
                 ]);
 
-                ExecuteCommand::dispatch($model, [
+                Dispatcher::dispatch($model, [
                     "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                     "sudo echo '" . trim($wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                     "sudo echo '" . trim($wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
@@ -49,7 +49,7 @@ class Node extends Model
                     "sudo bash install.sh > /dev/null 2>&1 &",
                 ]);
             } else {
-                ExecuteCommand::dispatch($model, [
+                Dispatcher::dispatch($model, [
                     "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
                     "sudo bash install.sh > /dev/null 2>&1 &",
                 ]);
@@ -78,7 +78,7 @@ class Node extends Model
                 Proposal::where('node_id', $model->id)->delete();
 
                 if ($model->wallet) {
-                    ExecuteCommand::dispatch($model, [
+                    Dispatcher::dispatch($model, [
                         "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                         "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                         "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
@@ -92,7 +92,7 @@ class Node extends Model
                             'node_id' => $model->id,
                         ]);
 
-                        ExecuteCommand::dispatch($model, [
+                        Dispatcher::dispatch($model, [
                             "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                             "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                             "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
@@ -100,7 +100,7 @@ class Node extends Model
                             "sudo bash install.sh > /dev/null 2>&1 &",
                         ]);
                     } else {
-                        ExecuteCommand::dispatch($model, [
+                        Dispatcher::dispatch($model, [
                             "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
                             "sudo bash install.sh > /dev/null 2>&1 &",
                         ]);
@@ -249,44 +249,5 @@ class Node extends Model
         }
 
         Cache::forever('nodes.mined.' . $this->id, $json->result->proposalSubmitted);
-    }
-
-    public function reindex($json, $date)
-    {
-        if (empty($json->result)) {
-            return false;
-        }
-
-        $count = (int)$json->result->height - (int)$this->height;
-
-        if (Cache::has('nodes.mined.' . $this->id) && $json->result->proposalSubmitted > Cache::get('nodes.mined.' . $this->id, 0)) {
-            $mined = $json->result->proposalSubmitted - Cache::get('nodes.mined.' . $this->id, 0);
-        } else {
-            $mined = 0;
-        }
-
-        $this->update([
-            'status' => $json->result->syncState,
-            'version' => $json->result->version,
-            'height' => $json->result->height,
-            'relays' => $json->result->relayMessageCount,
-            'uptime' => $json->result->uptime,
-        ]);
-
-        $this->blocks()->create([
-            'count' => ($this->blocks()->count() > 0 ? $count : 0),
-            'created_at' => $date,
-        ]);
-
-        $this->proposals()->create([
-            'count' => $mined,
-            'created_at' => $date,
-        ]);
-
-        if ($mined) {
-            Log::debug("Node {$this->host} has just mined!");
-        }
-
-        Cache::set('nodes.mined.' . $this->id, $json->result->proposalSubmitted);
     }
 }

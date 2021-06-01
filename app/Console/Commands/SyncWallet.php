@@ -2,13 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Wallet;
 use App\Models\Node;
+use App\Models\Wallet;
+use App\Shell;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use phpseclib3\Crypt\PublicKeyLoader;
-use phpseclib3\Net\SSH2;
 
 class SyncWallet extends Command
 {
@@ -17,14 +15,14 @@ class SyncWallet extends Command
      *
      * @var string
      */
-    protected $signature = 'sync:wallet';
+    protected $signature = 'sync:wallet {--id=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Sync wallets with nodes.';
+    protected $description = 'Sync wallet information.';
 
     /**
      * Create a new command instance.
@@ -43,68 +41,48 @@ class SyncWallet extends Command
      */
     public function handle()
     {
-        DB::table('wallets')->update([
-            'node_id' => null,
-        ]);
+        $query = Node::query();
 
-        $nodes = Node::all();
+        if ($this->option('id')) {
+            $query->whereIn('id', explode(',', $this->option('id')));
+        }
+
+        $nodes = $query->get();
+
         foreach ($nodes as $node) {
-            if (empty($node->account->sshKey->private_key)) {
-                echo "{$node->host}: SKIPPED\n";
-            } else {
-                try {
-                    $key = PublicKeyLoader::load($node->account->sshKey->private_key, $node->account->sshKey->password);
+            try {
+                $shell = new Shell($node);
+                $keystore = json_decode($shell->execute('cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json'));
+                $password = $shell->execute('cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd');
 
-                    $ssh = new SSH2($node->host);
-                    $ssh->setTimeout(15);
-                    $ssh->login($node->account->username, $key);
-
-                    $keystore = json_decode($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.json"));
-                    $password = trim($ssh->exec("cat /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd"));
-
-                    if (empty($keystore->Address)) {
-                        throw new Exception("Could not fetch the wallet keystore.");
-                    }
-
-                    $wallet = Wallet::where('address', $keystore->Address)->first();
-                    if ($wallet) {
-                        if ($wallet->node_id != $node->id) {
-                            echo "{$node->host}: DETACHED {$keystore->Address}\n";
-                        }
-
-                        $wallet->update([
-                            'node_id' => $node->id,
-                        ]);
-                    } else {
-                        if ($node->wallet) {
-                            echo "{$node->host}: DETACHED {$keystore->Address}\n";
-
-                            $node->wallet->update([
-                                'node_id' => null,
-                            ]);
-                        }
-
-                        Wallet::create([
-                            'node_id' => $node->id,
-                            'address' => $keystore->Address,
-                            'keystore' => json_encode($keystore),
-                            'password' => $password,
-                        ]);
-                    }
-
-                    if ($ssh->isConnected()) {
-                        $ssh->disconnect();
-                    }
-
-                    echo "{$node->host}: ATTACHED {$keystore->Address}\n";
-                } catch (Exception $exception) {
-                    echo "{$node->host}: FAILED (" . $exception->getMessage() . ")\n";
+                if (empty($keystore->Address)) {
+                    throw new Exception("Could not fetch the wallet keystore.");
                 }
 
-                if (!is_null($ssh) && $ssh->isConnected()) {
-                    $ssh->disconnect();
+                if ($node->wallet) {
+                    $node->wallet->update(['node_id' => null]);
+
+                    $this->info("{$node->host}: DETACHED {$keystore->Address}");
                 }
+
+                $wallet = Wallet::where('address', $keystore->Address)->first();
+                if ($wallet) {
+                    $wallet->update(['node_id' => $node->id]);
+                } else {
+                    Wallet::create([
+                        'node_id' => $node->id,
+                        'address' => $keystore->Address,
+                        'keystore' => json_encode($keystore),
+                        'password' => $password,
+                    ]);
+                }
+
+                $this->info("{$node->host}: ATTACHED {$keystore->Address}");
+            } catch (Exception $exception) {
+                $this->error("{$node->host}: ERROR ({$exception->getMessage()})");
             }
         }
+
+        return 0;
     }
 }

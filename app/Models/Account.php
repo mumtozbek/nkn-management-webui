@@ -29,7 +29,7 @@ class Account extends Model
         return [
             'name' => 'required|string|min:3|max:50',
             'provider_id' => 'required|exists:providers,id',
-            'username' => 'nullable|string',
+            'username' => 'required|string',
             'ssh_key_id' => 'nullable|exists:ssh_keys,id',
         ];
     }

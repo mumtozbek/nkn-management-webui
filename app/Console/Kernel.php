@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param Schedule $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -29,8 +29,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('sync:uptime')->everyTenMinutes()->withoutOverlapping(3600);
         $schedule->command('sync:location')->everyMinute()->withoutOverlapping(3600);
 
-        // Check wallet id every 30 minutes.
-        $schedule->command('wallets:id')->everyThreeHours()->withoutOverlapping(3600);
+        // Check wallets every 30 minutes.
+        $schedule->command('sync:wallet')->everyThirtyMinutes()->withoutOverlapping(3600);
+        $schedule->command('sync:wallet-id')->everyThirtyMinutes()->withoutOverlapping(3600);
 
         // Run scheduled jobs.
         $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping(3600);

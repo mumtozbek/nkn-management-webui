@@ -83,8 +83,7 @@ class SyncUptime extends Command
 
                     // Connection failed, so log it
                     $node->update([
-                        'uptime' => 0,
-                        'status' => 'OFFLINE',
+                        'status' => 'TIMEOUT',
                     ]);
                 }
             } catch (Exception $exception) {

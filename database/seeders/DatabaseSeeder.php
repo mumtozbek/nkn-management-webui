@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Node;
+use App\Models\Account;
+use App\Models\Provider;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -15,7 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Create demo user account
-        User::factory()->create(['email' => 'test@example.com']);
+        // Create demo user
+        User::create(['email' => 'test@example.com', 'name' => 'John Doe']);
+
+        // Create demo provider
+        $provider = Provider::create(['name' => 'Test']);
+
+        // Create demo account
+        Account::create(['name' => 'Test', 'provider_id' => $provider->id]);
     }
 }
