@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Wallet;
 use App\Models\Node;
+use App\Models\Wallet;
+use App\Shell;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
-use phpseclib3\Crypt\PublicKeyLoader;
-use phpseclib3\Net\SSH2;
+use Illuminate\Support\Facades\Log;
 
 class SyncWalletId extends Command
 {
@@ -18,14 +18,14 @@ class SyncWalletId extends Command
      *
      * @var string
      */
-    protected $signature = 'wallets:id';
+    protected $signature = 'sync:wallet-id {--id=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check wallet ids.';
+    protected $description = 'Sync wallet id information.';
 
     /**
      * Create a new command instance.
@@ -44,7 +44,13 @@ class SyncWalletId extends Command
      */
     public function handle()
     {
-        $wallets = Wallet::whereNull('generated_at')->get();
+        $query = Wallet::query();
+
+        if ($this->option('id')) {
+            $query->whereIn('id', explode(',', $this->option('id')));
+        }
+
+        $wallets = $query->get();
 
         foreach ($wallets as $wallet) {
             try {
@@ -52,18 +58,18 @@ class SyncWalletId extends Command
 
                 foreach ($response['data'] as $operation) {
                     if ($operation['txType'] == 'GENERATE_ID_TYPE' && $operation['block_id'] >= env('GENERATE_ID_START')) {
-                        $wallet->update([
-                            'generated_at' => $operation['created_at'],
-                        ]);
+                        $wallet->update(['generated_at' => $operation['created_at']]);
 
                         continue 2;
                     }
                 }
 
-                echo "{$wallet->address}: ID NOT FOUND\n";
+                $this->info("{$wallet->address}: ERROR (ID NOT FOUND)");
             } catch (Exception $exception) {
-                echo "{$wallet->address}: FAILED (" . $exception->getMessage() . ")\n";
+                $this->error("{$wallet->address}: ERROR ({$exception->getMessage()})");
             }
         }
+
+        return 0;
     }
 }

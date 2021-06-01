@@ -2,8 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\ExecuteCommand;
 use App\Models\Node;
+use App\Shell;
+use Exception;
 use Illuminate\Console\Command;
 
 class Console extends Command
@@ -13,14 +14,14 @@ class Console extends Command
      *
      * @var string
      */
-    protected $signature = 'console:dispatch {query}';
+    protected $signature = 'console {commands} {--id=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Execute command on nodes.';
+    protected $description = 'Shell command console';
 
     /**
      * Create a new command instance.
@@ -39,13 +40,25 @@ class Console extends Command
      */
     public function handle()
     {
-        $query = $this->argument('query');
+        $commands = $this->argument('commands');
 
-        $nodes = Node::all();
-        foreach ($nodes as $node) {
-            ExecuteCommand::dispatch($node, $query);
+        $query = Node::query();
+
+        if ($this->option('id')) {
+            $query->whereIn('id', explode(',', $this->option('id')));
         }
 
-        return 0;
+        $nodes = $query->get();
+
+        foreach ($nodes as $node) {
+            try {
+                $shell = new Shell($node);
+                $result = $shell->execute($commands);
+
+                $this->info("{$node->host}: SUCCESS" . ($result ? " ($result)" : ''));
+            } catch (Exception $exception) {
+                $this->error("{$node->host}: ERROR ({$exception->getMessage()})");
+            }
+        }
     }
 }

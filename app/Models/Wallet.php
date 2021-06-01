@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Jobs\ExecuteCommand;
+use App\Jobs\Dispatcher;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
@@ -30,7 +30,7 @@ class Wallet extends Model
 
         self::created(function ($model) {
             if ($model->node) {
-                ExecuteCommand::dispatch($model->node, [
+                Dispatcher::dispatch($model->node, [
                     "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                     "sudo echo '" . trim($model->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                     "sudo echo '" . trim($model->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
@@ -41,7 +41,7 @@ class Wallet extends Model
 
         self::updated(function ($model) {
             if ($model->node && ($model->isDirty('node_id') || $model->isDirty('address'))) {
-                ExecuteCommand::dispatch($model->node, [
+                Dispatcher::dispatch($model->node, [
                     "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                     "sudo echo '" . trim($model->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                     "sudo echo '" . trim($model->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",

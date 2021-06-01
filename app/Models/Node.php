@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Jobs\ExecuteCommand;
+use App\Jobs\Dispatcher;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,7 +41,7 @@ class Node extends Model
                     'node_id' => $model->id,
                 ]);
 
-                ExecuteCommand::dispatch($model, [
+                Dispatcher::dispatch($model, [
                     "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                     "sudo echo '" . trim($wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                     "sudo echo '" . trim($wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
@@ -49,7 +49,7 @@ class Node extends Model
                     "sudo bash install.sh > /dev/null 2>&1 &",
                 ]);
             } else {
-                ExecuteCommand::dispatch($model, [
+                Dispatcher::dispatch($model, [
                     "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
                     "sudo bash install.sh > /dev/null 2>&1 &",
                 ]);
@@ -78,7 +78,7 @@ class Node extends Model
                 Proposal::where('node_id', $model->id)->delete();
 
                 if ($model->wallet) {
-                    ExecuteCommand::dispatch($model, [
+                    Dispatcher::dispatch($model, [
                         "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                         "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                         "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
@@ -92,7 +92,7 @@ class Node extends Model
                             'node_id' => $model->id,
                         ]);
 
-                        ExecuteCommand::dispatch($model, [
+                        Dispatcher::dispatch($model, [
                             "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                             "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                             "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
@@ -100,7 +100,7 @@ class Node extends Model
                             "sudo bash install.sh > /dev/null 2>&1 &",
                         ]);
                     } else {
-                        ExecuteCommand::dispatch($model, [
+                        Dispatcher::dispatch($model, [
                             "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
                             "sudo bash install.sh > /dev/null 2>&1 &",
                         ]);
@@ -172,7 +172,7 @@ class Node extends Model
     /**
      * Wallet relation.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\belongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\hasOne
      */
     public function wallet()
     {
