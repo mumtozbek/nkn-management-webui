@@ -27,28 +27,6 @@ class Wallet extends Model
     public static function boot()
     {
         parent::boot();
-
-        self::created(function ($model) {
-            if ($model->node) {
-                Dispatcher::dispatch($model->node, [
-                    "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
-                    "sudo echo '" . trim($model->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
-                    "sudo echo '" . trim($model->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                    "sudo systemctl restart nkn",
-                ]);
-            }
-        });
-
-        self::updated(function ($model) {
-            if ($model->node && ($model->isDirty('node_id') || $model->isDirty('address'))) {
-                Dispatcher::dispatch($model->node, [
-                    "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
-                    "sudo echo '" . trim($model->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
-                    "sudo echo '" . trim($model->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                    "sudo systemctl restart nkn",
-                ]);
-            }
-        });
     }
 
     /**
