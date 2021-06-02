@@ -79,17 +79,17 @@ class Dispatch extends Command
                         "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                         "sudo echo '" . trim($node->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                         "sudo echo '" . trim($node->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                        "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
+                        "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt' > /dev/null 2>&1 &",
                         "sudo bash install.sh > /dev/null 2>&1 &",
                     ]);
                 } elseif ($action == 'reinstall') {
                     Dispatcher::dispatch($node, [
-                        "sudo wget -O reinstall.sh 'http://" . env('INSTALLER_SERVER') . "/reinstall.txt'",
+                        "sudo wget -O reinstall.sh 'http://" . env('INSTALLER_SERVER') . "/reinstall.txt' > /dev/null 2>&1 &",
                         "sudo bash reinstall.sh > /dev/null 2>&1 &",
                     ]);
                 } elseif ($action == 'prune') {
                     Dispatcher::dispatch($node, [
-                        "sudo wget -O prune.sh 'http://" . env('INSTALLER_SERVER') . "/prune.txt'",
+                        "sudo wget -O prune.sh 'http://" . env('INSTALLER_SERVER') . "/prune.txt' > /dev/null 2>&1 &",
                         "sudo bash prune.sh > /dev/null 2>&1 &",
                     ]);
                 } elseif ($action == 'start') {
@@ -126,7 +126,7 @@ class Dispatch extends Command
                     ]);
                 } elseif ($action == 'reboot-check') {
                     Dispatcher::dispatch($node, [
-                        "sudo wget -O reboot.sh 'http://" . env('INSTALLER_SERVER') . "/reboot.txt'",
+                        "sudo wget -O reboot.sh 'http://" . env('INSTALLER_SERVER') . "/reboot.txt' > /dev/null 2>&1 &",
                         "sudo bash reboot.sh > /dev/null 2>&1 &",
                     ]);
                 }
