@@ -25,6 +25,7 @@ class Dispatch extends Command
         'reboot',
         'close',
         'open',
+        'reboot-check',
     ];
 
     /**
@@ -122,6 +123,11 @@ class Dispatch extends Command
                         "sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config",
                         "sudo sed -i 's/PasswordAuthentication yes/#PasswordAuthentication yes/' /etc/ssh/sshd_config",
                         "sudo systemctl restart ssh",
+                    ]);
+                } elseif ($action == 'reboot-check') {
+                    Dispatcher::dispatch($node, [
+                        "sudo wget -O reboot.sh 'http://" . env('INSTALLER_SERVER') . "/reboot.txt'",
+                        "sudo bash reboot.sh > /dev/null 2>&1 &",
                     ]);
                 }
             }
