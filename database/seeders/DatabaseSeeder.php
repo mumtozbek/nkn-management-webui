@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Create demo user
-        User::create(['email' => 'test@example.com', 'name' => 'John Doe']);
+        User::create(['email' => 'test@example.com', 'name' => 'John Doe', 'password' => password_hash('password', null)]);
 
         // Create demo provider
         $provider = Provider::create(['name' => 'Test']);
