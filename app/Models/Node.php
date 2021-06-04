@@ -109,9 +109,11 @@ class Node extends Model
         });
 
         self::deleted(function ($model) {
-            $model->wallet->update([
-                'node_id' => null,
-            ]);
+            if ($model->wallet) {
+                $model->wallet->update([
+                    'node_id' => null,
+                ]);
+            }
         });
     }
 
