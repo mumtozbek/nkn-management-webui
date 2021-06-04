@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class Node extends Model
 {
@@ -124,7 +123,7 @@ class Node extends Model
     public function rules()
     {
         return [
-            'host' => 'required|unique:nodes,host,' . $this->id,
+            'host' => "required|unique:nodes,host,$this->id,id,deleted_at,NULL",
             'account_id' => 'required|exists:accounts,id',
         ];
     }
