@@ -53,7 +53,7 @@ class Dispatcher implements ShouldQueue
                 $result = $shell->execute($command);
 
                 if (config('app.debug')) {
-                    Log::channel('queue')->debug("JOB {$this->job->getJobId()}, HOST {$this->node->host} returned: \"$result\"");
+                    Log::channel('queue')->debug("JOB {$this->job->getJobId()}, HOST {$this->node->host}, COMMAND '$command' returned: \"$result\"");
                 }
             }
         } catch (Exception $exception) {
