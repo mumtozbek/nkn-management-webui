@@ -49,6 +49,10 @@ class Node extends Model
             Dispatcher::dispatch($model, [
                 "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
                 "sudo bash install.sh > /dev/null 2>&1 &",
+
+                "sudo sed -i 's/#PasswordAuthentication/PasswordAuthentication/' /etc/ssh/sshd_config",
+                "sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config",
+                "sudo systemctl restart ssh",
             ]);
         });
 
