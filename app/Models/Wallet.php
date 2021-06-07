@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Jobs\Dispatcher;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Event;
 
 class Wallet extends Model
 {
@@ -23,11 +21,6 @@ class Wallet extends Model
         'password',
         'generated_at',
     ];
-
-    public static function boot()
-    {
-        parent::boot();
-    }
 
     /**
      * Get the validation rules that apply to the request.
