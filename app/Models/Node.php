@@ -34,8 +34,7 @@ class Node extends Model
         parent::boot();
 
         self::created(function ($model) {
-            $wallet = Wallet::whereNull('node_id')->orderBy('generated_at', 'DESC')->first();
-            if ($wallet) {
+            if ($wallet = Wallet::whereNull('node_id')->orderBy('generated_at', 'DESC')->first()) {
                 $wallet->update([
                     'node_id' => $model->id,
                 ]);
@@ -44,15 +43,13 @@ class Node extends Model
                     "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                     "sudo echo '" . trim($wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                     "sudo echo '" . trim($wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                    "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
-                    "sudo bash install.sh > /dev/null 2>&1 &",
-                ]);
-            } else {
-                Dispatcher::dispatch($model, [
-                    "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
-                    "sudo bash install.sh > /dev/null 2>&1 &",
                 ]);
             }
+
+            Dispatcher::dispatch($model, [
+                "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
+                "sudo bash install.sh > /dev/null 2>&1 &",
+            ]);
         });
 
         self::updating(function ($model) {
@@ -81,12 +78,9 @@ class Node extends Model
                         "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                         "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                         "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                        "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
-                        "sudo bash install.sh > /dev/null 2>&1 &",
                     ]);
                 } else {
-                    $wallet = Wallet::whereNull('node_id')->orderBy('generated_at', 'DESC')->first();
-                    if ($wallet) {
+                    if ($wallet = Wallet::whereNull('node_id')->orderBy('generated_at', 'DESC')->first()) {
                         $wallet->update([
                             'node_id' => $model->id,
                         ]);
@@ -95,16 +89,14 @@ class Node extends Model
                             "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
                             "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
                             "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                            "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
-                            "sudo bash install.sh > /dev/null 2>&1 &",
-                        ]);
-                    } else {
-                        Dispatcher::dispatch($model, [
-                            "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
-                            "sudo bash install.sh > /dev/null 2>&1 &",
                         ]);
                     }
                 }
+
+                Dispatcher::dispatch($model, [
+                    "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
+                    "sudo bash install.sh > /dev/null 2>&1 &",
+                ]);
             }
         });
 
