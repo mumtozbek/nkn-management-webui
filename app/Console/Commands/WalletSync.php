@@ -8,14 +8,14 @@ use App\Shell;
 use Exception;
 use Illuminate\Console\Command;
 
-class SyncWallet extends Command
+class WalletSync extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'sync:wallet {--id=}';
+    protected $signature = 'wallet:sync {--id=}';
 
     /**
      * The console command description.

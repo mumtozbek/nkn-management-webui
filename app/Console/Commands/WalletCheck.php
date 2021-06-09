@@ -11,21 +11,21 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class SyncWalletId extends Command
+class WalletCheck extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'sync:wallet-id {--id=}';
+    protected $signature = 'wallet:check {--id=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Sync wallet id information.';
+    protected $description = 'Check wallet id information.';
 
     /**
      * Create a new command instance.

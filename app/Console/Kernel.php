@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('sync:location')->everyMinute()->withoutOverlapping(3600);
 
         // Check wallets id every 30 minutes.
-        $schedule->command('sync:wallet-id')->everyThirtyMinutes()->withoutOverlapping(3600);
+        $schedule->command('wallet:check')->everyThirtyMinutes()->withoutOverlapping(3600);
 
         // Schedule reboot required checker job.
         $schedule->command('dispatch reboot-check')->weeklyOn(1)->withoutOverlapping(3600);
