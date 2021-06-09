@@ -7,21 +7,21 @@ use App\Shell;
 use Exception;
 use Illuminate\Console\Command;
 
-class Console extends Command
+class Perform extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'console {commands} {--id=}';
+    protected $signature = 'perform {commands} {--id=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Shell command console';
+    protected $description = 'Execute node ssh commands';
 
     /**
      * Create a new command instance.
