@@ -34,37 +34,39 @@ class Node extends Model
         parent::boot();
 
         self::created(function ($model) {
-            if ($wallet = Wallet::whereNull('node_id')->orderBy('generated_at', 'DESC')->first()) {
-                $wallet->update([
-                    'node_id' => $model->id,
-                ]);
+            $wallet = Wallet::whereNull('node_id')->orderBy('generated_at', 'DESC')->first();
 
-                Dispatcher::dispatch($model, [
-                    "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
-                    "sudo echo '" . trim($wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
-                    "sudo echo '" . trim($wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                ]);
+            if (!$wallet) {
+                $wallet = Wallet::generate();
             }
 
-            Dispatcher::dispatch($model, [
-                "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
-                "sudo bash install.sh > /dev/null 2>&1 &",
+            $wallet->update([
+                'node_id' => $model->id,
+            ]);
 
+            Dispatcher::dispatch($model, [
                 "sudo sed -i 's/#PasswordAuthentication/PasswordAuthentication/' /etc/ssh/sshd_config",
                 "sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config",
                 "sudo systemctl restart ssh",
+
+                "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
+                "sudo echo '" . trim($wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
+                "sudo echo '" . trim($wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
+
+                "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
+                "sudo bash install.sh > /dev/null 2>&1 &",
             ]);
         });
 
         self::updating(function ($model) {
-            $model->attributes['host'] = $model->getOriginal('host');
+            if ($model->isDirty('host')) {
+                $model->attributes['host'] = $model->getOriginal('host');
+            }
         });
 
         self::deleted(function ($model) {
             if ($model->wallet) {
-                $model->wallet->update([
-                    'node_id' => null,
-                ]);
+                $model->wallet->update(['node_id' => null]);
             }
         });
     }
