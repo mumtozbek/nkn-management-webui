@@ -57,51 +57,7 @@ class Node extends Model
         });
 
         self::updating(function ($model) {
-            if ($model->isDirty('host')) {
-                $model->fill([
-                    'country' => null,
-                    'region' => null,
-                    'city' => null,
-                    'status' => null,
-                    'version' => null,
-                    'height' => null,
-                    'relays' => null,
-                    'uptime' => null,
-                ]);
-            }
-        });
-
-        self::updated(function ($model) {
-            if ($model->isDirty('host')) {
-                Uptime::where('node_id', $model->id)->delete();
-                Block::where('node_id', $model->id)->delete();
-                Proposal::where('node_id', $model->id)->delete();
-
-                if ($model->wallet) {
-                    Dispatcher::dispatch($model, [
-                        "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
-                        "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
-                        "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                    ]);
-                } else {
-                    if ($wallet = Wallet::whereNull('node_id')->orderBy('generated_at', 'DESC')->first()) {
-                        $wallet->update([
-                            'node_id' => $model->id,
-                        ]);
-
-                        Dispatcher::dispatch($model, [
-                            "sudo mkdir -p /home/nkn/nkn-commercial/services/nkn-node",
-                            "sudo echo '" . trim($model->wallet->keystore) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.json",
-                            "sudo echo '" . trim($model->wallet->password) . "' | sudo tee /home/nkn/nkn-commercial/services/nkn-node/wallet.pswd",
-                        ]);
-                    }
-                }
-
-                Dispatcher::dispatch($model, [
-                    "sudo wget -O install.sh 'http://" . env('INSTALLER_SERVER') . "/install.txt'",
-                    "sudo bash install.sh > /dev/null 2>&1 &",
-                ]);
-            }
+            $model->attributes['host'] = $model->getOriginal('host');
         });
 
         self::deleted(function ($model) {

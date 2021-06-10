@@ -17,7 +17,7 @@
 
                             <div class="form-group">
                                 <label for="host">{{ __('Host') }}</label>
-                                <input type="text" name="host" id="host" value="{{ old('host', $node->host) }}" class="form-control" required>
+                                <input type="text" id="host" value="{{ old('host', $node->host) }}" class="form-control" readonly>
                             </div>
 
                             <div class="form-group">
