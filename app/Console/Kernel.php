@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('wallet:check')->everyThirtyMinutes()->withoutOverlapping(3600);
 
         // Schedule reboot required checker job.
-        $schedule->command('node:dispatch reboot-check')->weeklyOn(1)->withoutOverlapping(3600);
+        $schedule->command('node:dispatch reboot-check')->monthlyOn(1)->withoutOverlapping(3600);
 
         // Run scheduled jobs.
         $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping(3600);
