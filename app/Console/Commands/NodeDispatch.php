@@ -6,7 +6,7 @@ use App\Jobs\Dispatcher;
 use App\Models\Node;
 use Illuminate\Console\Command;
 
-class Dispatch extends Command
+class NodeDispatch extends Command
 {
     /**
      * Available actions.
@@ -33,7 +33,7 @@ class Dispatch extends Command
      *
      * @var string
      */
-    protected $signature = 'dispatch {action} {params?} {--id=}';
+    protected $signature = 'node:dispatch {action} {params?} {--id=}';
 
     /**
      * The console command description.

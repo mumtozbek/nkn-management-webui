@@ -7,14 +7,14 @@ use App\Shell;
 use Exception;
 use Illuminate\Console\Command;
 
-class Perform extends Command
+class NodePerform extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'perform {commands} {--id=}';
+    protected $signature = 'node:perform {commands} {--id=}';
 
     /**
      * The console command description.
