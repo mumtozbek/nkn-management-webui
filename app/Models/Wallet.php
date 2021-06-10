@@ -46,4 +46,45 @@ class Wallet extends Model
     {
         return $this->belongsTo(Node::class);
     }
+
+    /**
+     * Generate a new wallet.
+     *
+     * @param $password
+     */
+    public static function generate()
+    {
+        if (empty(env('NKN_BIN_DIR'))) {
+            throw new \Exception('Invalid NKN_BIN_DIR env var.');
+        }
+
+        $nknc = env('NKN_BIN_DIR') . 'nknc';
+        if (!is_file($nknc)) {
+            throw new \Exception('NKNC not found.');
+        }
+
+        if (empty(env('NKN_DEFAULT_PASS'))) {
+            throw new \Exception('Invalid NKN_DEFAULT_PASS env var.');
+        }
+
+        $walletFile = storage_path('nkn/wallet.json');
+
+        if (is_file($walletFile)) {
+            unlink($walletFile);
+        }
+
+        [$address, $privateKey] = explode('   ', exec(env('NKN_BIN_DIR') . 'nknc wallet -c -p ' . env('NKN_DEFAULT_PASS') . ' -n ' . $walletFile));
+
+        $wallet = self::create([
+            'address' => $address,
+            'keystore' => file_get_contents($walletFile),
+            'password' => env('NKN_DEFAULT_PASS'),
+        ]);
+
+        if (is_file($walletFile)) {
+            unlink($walletFile);
+        }
+
+        return $wallet;
+    }
 }
