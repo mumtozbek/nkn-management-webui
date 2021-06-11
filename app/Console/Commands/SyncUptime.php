@@ -45,13 +45,36 @@ class SyncUptime extends Command
         // Check all nodes' states
         $nodes->each(function ($node) {
             try {
-                $response = $this->getNodeState($node->host);
+                $data = [
+                    'jsonrpc' => '2.0',
+                    'id' => '1',
+                    'method' => 'getnodestate',
+                    'params' => (object)[],
+                ];
+
+                $ch = curl_init("http://{$node->host}:30003/");
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, env('CURLOPT_CONNECTTIMEOUT', 3));
+                curl_setopt($ch, CURLOPT_TIMEOUT, env('CURLOPT_TIMEOUT', 3));
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                        'Content-Type: application/json',
+                        'Content-Length: ' . strlen(json_encode($data))
+                    ]
+                );
+
+                $response = curl_exec($ch);
+                $info = curl_getinfo($ch);
+
+                curl_close($ch);
+
                 if (is_string($response)) {
                     $json = json_decode($response);
 
                     if (!empty($json)) {
                         if (!empty($json->result)) {
-                            $node->index($json);
+                            $node->index($json, $info);
 
                             return true;
                         } elseif (!empty($json->error)) {
@@ -90,30 +113,5 @@ class SyncUptime extends Command
                 Log::error($exception->getMessage());
             }
         });
-    }
-
-    private function getNodeState($host)
-    {
-        $data = [
-            'jsonrpc' => '2.0',
-            'id' => '1',
-            'method' => 'getnodestate',
-            'params' => (object)[],
-        ];
-
-        $ch = curl_init('http://' . $host . ':30003/');
-
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, env('CURLOPT_CONNECTTIMEOUT', 3));
-        curl_setopt($ch, CURLOPT_TIMEOUT, env('CURLOPT_TIMEOUT', 3));
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen(json_encode($data))
-            ]
-        );
-
-        return curl_exec($ch);
     }
 }

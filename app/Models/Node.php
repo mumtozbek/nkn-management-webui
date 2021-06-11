@@ -154,7 +154,7 @@ class Node extends Model
         return $this->account->provider();
     }
 
-    public function index($json)
+    public function index($json, $info)
     {
         $count = (int)$json->result->height - (int)$this->height;
 
@@ -182,6 +182,11 @@ class Node extends Model
 
         $this->uptimes()->create([
             'speed' => $speed,
+            'time_total' => $info['total_time'],
+            'time_connect' => $info['connect_time'],
+            'time_pretransfer' => $info['pretransfer_time'],
+            'speed_upload' => $info['speed_upload'],
+            'speed_download' => $info['speed_download'],
         ]);
 
         $this->blocks()->create([

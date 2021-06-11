@@ -16,6 +16,11 @@ class Uptime extends Model
      */
     protected $fillable = [
         'speed',
+        'time_total',
+        'time_connect',
+        'time_pretransfer',
+        'speed_upload',
+        'speed_download',
     ];
 
     /**
