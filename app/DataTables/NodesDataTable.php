@@ -55,7 +55,7 @@ class NodesDataTable extends DataTable
                     ->orWhere('accounts.name', 'LIKE', "%" . $keyword . "%");
             })->filterColumn('speed', function ($query, $keyword) {
                 return false;
-            })->filterColumn('hours', function ($query, $keyword) {
+            })->filterColumn('uptime', function ($query, $keyword) {
                 return false;
             })->filterColumn('lifetime', function ($query, $keyword) {
                 return false;
@@ -77,8 +77,8 @@ class NodesDataTable extends DataTable
         return $model
             ->leftJoin('accounts', 'account_id', '=', 'accounts.id')
             ->leftJoin('providers', 'accounts.provider_id', '=', 'providers.id')
-            ->select(['nodes.*'])
-            ->selectRaw('ROUND(nodes.uptime / 3600, 2) AS hours')
+            ->select(['nodes.id', 'nodes.host', 'nodes.country', 'nodes.region', 'nodes.city', 'nodes.status', 'nodes.version', 'nodes.height'])
+            ->selectRaw('ROUND(nodes.uptime / 3600, 2) AS uptime')
             ->selectRaw('CONCAT(providers.name, " (", accounts.name, ")") AS account')
             ->selectRaw('(SELECT SUM(proposals.count) FROM proposals WHERE proposals.node_id = nodes.id) AS proposals')
             ->selectRaw('(SELECT ROUND(speed, 2) FROM uptimes WHERE node_id = nodes.id ORDER BY created_at DESC LIMIT 1) AS speed')
@@ -124,7 +124,7 @@ class NodesDataTable extends DataTable
             Column::make('status'),
             Column::make('version'),
             Column::make('height'),
-            Column::make('hours'),
+            Column::make('uptime'),
             Column::make('lifetime'),
             Column::make('proposals'),
             Column::make('speed'),
