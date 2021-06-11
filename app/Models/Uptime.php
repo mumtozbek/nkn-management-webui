@@ -16,14 +16,13 @@ class Uptime extends Model
      */
     protected $fillable = [
         'speed',
-        'response',
     ];
 
     /**
      * Auto typecasting fields.
      */
     protected $casts = [
-        'response' => 'object',
+
     ];
 
     public static function getChartData($id = null)

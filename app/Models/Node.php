@@ -182,7 +182,6 @@ class Node extends Model
 
         $this->uptimes()->create([
             'speed' => $speed,
-            'response' => $json,
         ]);
 
         $this->blocks()->create([
