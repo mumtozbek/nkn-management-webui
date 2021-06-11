@@ -26,9 +26,9 @@ class WalletsDataTable extends DataTable
                     '<input type="hidden" name="_token" value="' . csrf_token() . '">',
                     '</form>',
                     '<div class="dt-buttons btn-group flex-wrap">',
-                    '<a href="' . route('wallets.show', $item->id) . '" class="btn btn-primary">' . __('Show') . '</a>',
-                    '<a href="' . route('wallets.edit', $item->id) . '" class="btn btn-success">' . __('Edit') . '</a>',
-                    '<a class="btn btn-danger" href="#" onclick="if(confirm(\'' . __('Do You really want to delete this wallet?') . '\')) document.getElementById(\'delete-' . $item->id . '\').submit()">' . __('Delete') . '</a>',
+                    '<a href="' . route('wallets.show', $item->id) . '" class="btn btn-primary" title="' . __('Show') . '"><i class="fa fa-eye"></i></a>',
+                    '<a href="' . route('wallets.edit', $item->id) . '" class="btn btn-success" title="' . __('Edit') . '"><i class="fa fa-pencil"></i></a>',
+                    '<a class="btn btn-danger" href="#" onclick="if(confirm(\'' . __('Do You really want to delete this wallet?') . '\')) document.getElementById(\'delete-' . $item->id . '\').submit()" title="' . __('Delete') . '"><i class="fa fa-trash"></i></a>',
                     '</div>',
                 ]);
             })->filterColumn('node', function ($query, $keyword) {
@@ -92,7 +92,7 @@ class WalletsDataTable extends DataTable
                 ->exportable(false)
                 ->printable(false)
                 ->editField(true)
-                ->width(200)
+                ->width(120)
                 ->addClass('text-right'),
         ];
     }
