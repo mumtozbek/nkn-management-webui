@@ -199,6 +199,7 @@ class Node extends Model
         if ($mined > 0) {
             $this->proposals()->create([
                 'count' => $mined,
+                'speed' => $speed,
             ]);
         }
 

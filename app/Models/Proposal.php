@@ -16,6 +16,7 @@ class Proposal extends Model
      */
     protected $fillable = [
         'count',
+        'speed',
         'created_at',
     ];
 
