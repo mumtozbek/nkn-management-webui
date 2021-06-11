@@ -24,6 +24,7 @@ class Node extends Model
         'height',
         'relays',
         'uptime',
+        'ping',
         'country',
         'region',
         'city',
@@ -178,6 +179,7 @@ class Node extends Model
             'height' => $json->result->height,
             'relays' => $json->result->relayMessageCount,
             'uptime' => $json->result->uptime,
+            'ping' => $info['total_time'],
         ]);
 
         $this->uptimes()->create([

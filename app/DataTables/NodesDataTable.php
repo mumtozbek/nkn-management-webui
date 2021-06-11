@@ -77,7 +77,7 @@ class NodesDataTable extends DataTable
         return $model
             ->leftJoin('accounts', 'account_id', '=', 'accounts.id')
             ->leftJoin('providers', 'accounts.provider_id', '=', 'providers.id')
-            ->select(['nodes.id', 'nodes.host', 'nodes.country', 'nodes.region', 'nodes.city', 'nodes.status', 'nodes.version', 'nodes.height'])
+            ->select(['nodes.id', 'nodes.host', 'nodes.country', 'nodes.region', 'nodes.city', 'nodes.status', 'nodes.version', 'nodes.height', 'nodes.ping'])
             ->selectRaw('ROUND(nodes.uptime / 3600, 2) AS uptime')
             ->selectRaw('CONCAT(providers.name, " (", accounts.name, ")") AS account')
             ->selectRaw('(SELECT SUM(proposals.count) FROM proposals WHERE proposals.node_id = nodes.id) AS proposals')
@@ -128,6 +128,7 @@ class NodesDataTable extends DataTable
             Column::make('lifetime'),
             Column::make('proposals'),
             Column::make('speed'),
+            Column::make('ping'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
