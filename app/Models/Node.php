@@ -183,6 +183,12 @@ class Node extends Model
             'ping' => $info['total_time'],
         ]);
 
+        if (is_null($this->installed_at)) {
+            $this->update([
+                'installed_at' => Carbon::now()->subSeconds($json->result->uptime),
+            ]);
+        }
+
         $this->uptimes()->create([
             'speed' => $speed,
             'time_total' => $info['total_time'],
