@@ -22,10 +22,14 @@ class AddInstalledAtColumnToNodesTable extends Migration
             $table->timestamp('installed_at')->nullable(true)->after('city');
         });
 
-        Node::withTrashed()->whereNull('installed_at')->get()->each(function ($node) {
+        Node::withTrashed()->get()->each(function ($node) {
             if ($firstConnection = $node->uptimes()->first()) {
                 $installedAt = $firstConnection->created_at;
             } else {
+                $installedAt = $node->created_at;
+            }
+
+            if ($node->created_at->lt($installedAt)) {
                 $installedAt = $node->created_at;
             }
 
