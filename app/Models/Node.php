@@ -28,6 +28,7 @@ class Node extends Model
         'country',
         'region',
         'city',
+        'installed_at',
     ];
 
     public static function boot()
