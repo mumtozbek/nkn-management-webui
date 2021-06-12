@@ -13,12 +13,10 @@ class AccountController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param AccountsDataTable $dataTable
-     * @return \Illuminate\Http\Response
      */
-    public function index(AccountsDataTable $dataTable)
+    public function index()
     {
-        return $dataTable->render('accounts.index');
+        return view('accounts.index');
     }
 
     /**

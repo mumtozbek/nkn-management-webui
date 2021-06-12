@@ -15,12 +15,10 @@
                     </div>
                 @endif
 
-                {{ $dataTable->table([], false, false) }}
+                <div id="grid">
+                    <account-grid></account-grid>
+                </div>
             </div>
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    {{$dataTable->scripts()}}
-@endpush

@@ -16,6 +16,12 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="https://cdn3.devexpress.com/jslib/21.1.3/css/dx.light.css" rel="stylesheet" type="text/css" />
+
+    <script>
+        window._locale = '{{ app()->getLocale() }}';
+        window._translations = {!! cache('translations') !!};
+    </script>
 </head>
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.2/chart.min.js"></script>
@@ -30,7 +36,6 @@
     </div>
 
     <script src="{{ mix('js/app.js') }}"></script>
-    <script src="{{ asset('vendor/datatables/buttons.server-side.js') }}"></script>
     @stack('scripts')
 </body>
 </html>
