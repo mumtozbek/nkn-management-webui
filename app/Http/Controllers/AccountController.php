@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DataTables\AccountsDataTable;
 use App\Models\Account;
+use App\Models\Node;
 use App\Models\Provider;
 use App\Models\SshKey;
 use Illuminate\Http\Request;
@@ -12,13 +13,14 @@ class AccountController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param AccountsDataTable $dataTable
-     * @return \Illuminate\Http\Response
      */
-    public function index(AccountsDataTable $dataTable)
+    public function index()
     {
-        return $dataTable->render('accounts.index');
+        if (request()->wantsJson()) {
+            return Account::all();
+        }
+
+        return view('accounts.index');
     }
 
     /**
