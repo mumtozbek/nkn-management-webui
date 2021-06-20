@@ -168,7 +168,7 @@ class Node extends Model
             $mined = 0;
         }
 
-        if ($this->status == 'PERSIST_FINISHED' && $json->result->uptime <= $this->uptime) {
+        if ($this->status == 'TIMEOUT' && $json->result->uptime <= $this->uptime) {
             $restartedAt = Carbon::now()->subSeconds($json->result->uptime);
         } else {
             $restartedAt = null;
