@@ -30,12 +30,12 @@
 
                             <div class="form-group">
                                 <label for="keystore">{{ __('Keystore') }}</label>
-                                <textarea name="keystore" id="keystore" class="form-control" rows="10">{{ old('keystore') }}</textarea>
+                                <textarea name="keystore" id="keystore" class="form-control" rows="10" required>{{ old('keystore') }}</textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="password">{{ __('Password') }}</label>
-                                <input type="text" name="password" id="password" value="{{ old('password') }}" class="form-control">
+                                <input type="text" name="password" id="password" value="{{ old('password') }}" class="form-control" required>
                             </div>
 
                             <div class="form-group">

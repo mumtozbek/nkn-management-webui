@@ -5,7 +5,6 @@ namespace App\Providers;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -17,6 +16,20 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+
+        App\Events\NodeCreated::class => [
+            App\Listeners\DispatchNodeInstallation::class,
+        ],
+        App\Events\NodeRewarded::class => [
+            App\Listeners\SendNodeRewardedNotification::class,
+        ],
+        App\Events\NodeConnectionTimedOut::class => [
+            App\Listeners\SendNodeConnectionTimeoutNotification::class,
+        ],
+
+        App\Events\WalletCreated::class => [
+            App\Listeners\DispatchWalletSync::class,
         ],
     ];
 
